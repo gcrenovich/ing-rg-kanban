@@ -1,0 +1,1 @@
+El usuario encontró error 404 porque los archivos abm no estaban. Esta entrega incluye equipos.php y usuarios.php funcionales, para agregar/editar/eliminar equipos e integrantes. Proyecto completo listo para XAMPP.
