@@ -1,4 +1,5 @@
 <?php
+include 'includes/header.php';
 require 'db.php';
 
 $nombre = "Admin Principal";

@@ -1,5 +1,6 @@
 // actualizar_estado.php
 <?php
+include 'includes/header.php';
 require 'db.php';
 $id = $_POST['id'];
 $estado = $_POST['estado'];

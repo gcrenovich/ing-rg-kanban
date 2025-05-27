@@ -1,5 +1,7 @@
 // abm_tareas.php
 <?php
+include 'includes/header.php';
+
 require 'db.php';
 session_start();
 if (!isset($_SESSION['usuario_id'])) exit('Acceso denegado');

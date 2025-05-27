@@ -1,49 +1,57 @@
-
-.tarea[data-urgencia="alta"] { background-color: #f44336; }
-.tarea[data-urgencia="media"] { background-color: #ff9800; }
-.tarea[data-urgencia="baja"] { background-color: #8bc34a; }
-.tarea.realizada { border-left: 5px solid green; }
-header nav {
-  background: #333;
-  color: #fff;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-header nav a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-header nav a:hover {
-  text-decoration: underline;
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  margin: 0;
+  padding: 20px;
 }
 
-footer {
-  margin-top: 30px;
-  padding: 10px;
-  background: #eee;
-  border-top: 1px solid #ccc;
-}
 .kanban {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 20px;
-  margin-top: 20px;
 }
+
 .columna {
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
   flex: 1;
-  min-width: 300px;
+  padding: 10px;
+  min-height: 300px;
   border-radius: 8px;
-  min-height: 400px;
-  box-sizing: border-box;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
-.columna h2 {
-  text-align: center;
+
+.columna[data-estado="pendiente"] {
+  background-color: #fff8b3;
+}
+
+.columna[data-estado="proceso"] {
+  background-color: #d0f0ff;
+}
+
+.columna[data-estado="realizado"] {
+  background-color: #d6f5d6;
+}
+
+.tarea {
+  background: #fff;
   margin-bottom: 10px;
+  padding: 10px;
+  border-left: 5px solid transparent;
+  border-radius: 5px;
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+  cursor: grab;
+}
+
+/* Urgencia */
+.tarea[data-urgencia="alta"]  { border-left-color: red; }
+.tarea[data-urgencia="media"] { border-left-color: orange; }
+.tarea[data-urgencia="baja"]  { border-left-color: green; }
+
+.tarea.realizada {
+  background-color: #e0ffe0;
+  cursor: default;
+}
+
+.tarea small {
+  color: #555;
+  font-size: 0.85em;
 }

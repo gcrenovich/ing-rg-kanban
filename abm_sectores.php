@@ -1,5 +1,6 @@
 // abm_sectores.php
 <?php
+include 'includes/header.php';
 require 'db.php';
 session_start();
 if ($_SESSION['rol'] !== 'admin') exit('Acceso denegado');
