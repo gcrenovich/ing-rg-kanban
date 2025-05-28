@@ -1,4 +1,5 @@
 <?php
+include 'includes/navbar.php';
 require 'db.php';
 session_start();
 if ($_SESSION['rol'] !== 'admin') {
