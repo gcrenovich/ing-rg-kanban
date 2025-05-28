@@ -72,7 +72,7 @@ include 'includes/navbar.php'; // ✅ agregamos el menú aquí
     <h3>Realizado</h3>
     <div class="tareas">
       <?php foreach ($tareas as $t): if ($t['estado'] === 'realizado'): ?>
-        <div class='tarea realizada urgencia-<?= $t['urgencia'] ?>' draggable='false'
+        <div class='tarea realizada urgencia-<?= $t['urgencia'] ?>' draggable='true'
              data-id='<?= $t['id'] ?>'
              data-urgencia='<?= $t['urgencia'] ?>'
              data-usuario='<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>'
