@@ -14,23 +14,30 @@ body {
 .columna {
   flex: 1;
   padding: 10px;
-  min-height: 300px;
   border-radius: 8px;
+  min-height: 300px;
   box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
 
-.columna[data-estado="pendiente"] {
-  background-color: #fff8b3;
+/* Colores de fondo por estado */
+.columna-pendiente {
+  background-color: #fff9c4; /* amarillo claro */
 }
 
-.columna[data-estado="proceso"] {
-  background-color: #d0f0ff;
+.columna-proceso {
+  background-color: #d0f0ff; /* celeste claro */
 }
 
-.columna[data-estado="realizado"] {
-  background-color: #d6f5d6;
+.columna-realizado {
+  background-color: #c8e6c9; /* verde claro */
 }
 
+.columna h3 {
+  text-align: center;
+  margin-top: 0;
+}
+
+/* Tarea general */
 .tarea {
   background: #fff;
   margin-bottom: 10px;
@@ -41,16 +48,24 @@ body {
   cursor: grab;
 }
 
-/* Urgencia */
-.tarea[data-urgencia="alta"]  { border-left-color: red; }
-.tarea[data-urgencia="media"] { border-left-color: orange; }
-.tarea[data-urgencia="baja"]  { border-left-color: green; }
+/* Urgencias */
+.tarea.urgencia-alta {
+  border-left-color: red;
+}
+.tarea.urgencia-media {
+  border-left-color: orange;
+}
+.tarea.urgencia-baja {
+  border-left-color: green;
+}
 
+/* Tarea finalizada */
 .tarea.realizada {
   background-color: #e0ffe0;
   cursor: default;
 }
 
+/* Usuario asignado */
 .tarea small {
   color: #555;
   font-size: 0.85em;
