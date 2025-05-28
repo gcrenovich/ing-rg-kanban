@@ -16,13 +16,4 @@ if (session_status() == PHP_SESSION_NONE) session_start();
 </head>
 <body>
 <header>
-  <nav>
-    <a href="dashboard.php">Inicio</a>
-    <?php if ($_SESSION['rol'] === 'admin'): ?>
-      <a href="abm_usuarios.php">Usuarios</a>
-      <a href="abm_sectores.php">Sectores</a>
-    <?php endif; ?>
-    <a href="abm_tareas.php">Tareas</a>
-    <a href="logout.php">Salir</a>
-  </nav>
 </header>
