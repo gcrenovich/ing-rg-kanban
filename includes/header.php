@@ -10,7 +10,7 @@ if (session_status() == PHP_SESSION_NONE) session_start();
 </head>
 <body>
 <header>
-  <!--<nav>
+  <nav>
     <a href="dashboard.php">Inicio</a>
    <?php if ($_SESSION['rol'] === 'admin'): ?>
       <a href="abm_usuarios.php">Usuarios</a>
@@ -18,5 +18,5 @@ if (session_status() == PHP_SESSION_NONE) session_start();
     <?php endif; ?>
     <a href="abm_tareas.php">Tareas</a>
     <a href="logout.php">Salir</a>
-  </nav>-->
+  </nav>
 </header>
