@@ -11,6 +11,7 @@ $stmt->execute([$sector_id]);
 $tareas = $stmt->fetchAll();
 
 include 'includes/header.php';
+include 'includes/footer.php';
 include 'includes/navbar.php'; // ✅ agregamos el menú aquí
 ?>
 
