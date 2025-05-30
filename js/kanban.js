@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (estado === 'realizado') {
           tarea.classList.add('realizada');
-          tarea.setAttribute('draggable', 'false');
+          tarea.setAttribute('draggable', 'true');
         } else {
           tarea.classList.remove('realizada');
           tarea.setAttribute('draggable', 'true');
