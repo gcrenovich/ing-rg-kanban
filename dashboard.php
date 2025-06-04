@@ -84,7 +84,9 @@ include 'includes/navbar.php'; // ✅ agregamos el menú aquí
     </div>
   </div>
 </div>
-
+<script>
+  window.rol = '<?= $_SESSION['rol'] ?>';
+</script>
 <script src="js/kanban.js"></script>
 <script>
   // Filtrado dinámico

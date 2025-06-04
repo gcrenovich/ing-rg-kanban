@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tarea = document.querySelector(`.tarea[data-id='${id}']`);
       const estado = col.closest('.columna').dataset.estado;
 
-      if (tarea) {
+    /**   if (tarea) {
         col.appendChild(tarea);
 
         if (estado === 'realizado') {
@@ -43,7 +43,37 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: `id=${id}&estado=${estado}`
         }).then(res => res.text()).then(console.log);
-      }
+      }*/
+     if (tarea) {
+  const estadoActual = tarea.parentElement.closest('.columna').dataset.estado;
+
+  // Si es usuario, solo puede avanzar (pendiente > proceso > realizado)
+  if (window.rol === 'usuario') {
+    const orden = ['pendiente', 'proceso', 'realizado'];
+    const idxActual = orden.indexOf(estadoActual);
+    const idxNuevo = orden.indexOf(estado);
+
+    if (idxNuevo - idxActual !== 1) {
+      alert("No tenés permisos para hacer ese movimiento.");
+      return;
+    }
+  }
+
+  col.appendChild(tarea);
+
+  if (estado === 'realizado') {
+    tarea.classList.add('realizada');
+  } else {
+    tarea.classList.remove('realizada');
+  }
+
+  fetch('actualizar_estado.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `id=${id}&estado=${estado}`
+  }).then(res => res.text()).then(console.log);
+}
+
     });
   });
 });
