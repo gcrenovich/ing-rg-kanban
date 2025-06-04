@@ -7,6 +7,7 @@ if ($_SESSION['rol'] !== 'admin') {
   exit;
 }
 
+
 // Alta
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
   $nombre = $_POST['nombre'];
@@ -23,6 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
 // Baja
 if (isset($_GET['eliminar'])) {
   $conn->prepare("DELETE FROM usuarios WHERE id = ?")->execute([$_GET['eliminar']]);
+}
+
+//modificación
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_id'])) {
+  $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, email = ?, equipo = ?, sector_id = ?, rol = ? WHERE id = ?");
+  $stmt->execute([
+    $_POST['nombre'],
+    $_POST['email'],
+    $_POST['equipo'],
+    $_POST['sector_id'],
+    $_POST['rol'],
+    $_POST['editar_id']
+  ]);
+  $mensaje = "Usuario actualizado correctamente.";
 }
 
 // Obtener usuarios y sectores

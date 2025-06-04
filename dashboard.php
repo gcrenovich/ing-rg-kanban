@@ -6,8 +6,16 @@ if (!isset($_SESSION['usuario_id'])) {
   exit;
 }
 $sector_id = $_SESSION['sector_id'];
-$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario FROM tareas t JOIN usuarios u ON t.usuario_id = u.id WHERE t.sector_id = ?");
-$stmt->execute([$sector_id]);
+//$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario FROM tareas t JOIN usuarios u ON t.usuario_id = u.id WHERE t.sector_id = ?");
+$hoy = date('Y-m-d');
+
+$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
+                        FROM tareas t
+                        JOIN usuarios u ON t.usuario_id = u.id
+                        WHERE t.sector_id = ?
+                        AND t.fecha_inicio = ?");
+$stmt->execute([$sector_id, $hoy]);
+//$stmt->execute([$sector_id]);
 $tareas = $stmt->fetchAll();
 
 include 'includes/header.php';

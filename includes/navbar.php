@@ -31,7 +31,16 @@
         <li class="nav-item"><a class="nav-link" href="abm_sectores.php">Sectores</a></li>
         <li class="nav-item"><a class="nav-link" href="abm_tareas.php">Tareas</a></li>
         <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Salir</a></li>
+        <?php if ($_SESSION['rol'] === 'admin'): ?>
+  <li class="nav-item">
+    <a class="nav-link" href="actualizar_diarias.php">Actualizar Diarias</a>
+  </li>
+<?php endif; ?>
+
       </ul>
     </div>
   </div>
+
+  
 </nav>
+
