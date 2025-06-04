@@ -1,4 +1,3 @@
-// login.php
 <?php
 require 'db.php';
 session_start();
@@ -26,11 +25,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Login Kanban</title>
 </head>
 <body>
-  <h2>Ingreso al sistema</h2>
-  <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
-  <form method="post">
-    Email: <input type="email" name="email" required><br>
-    Contraseña: <input type="password" name="clave" required><br>
+  <div class="contenido">
+    <h1>Kanban - Ingreso al sistema</h1>
+    <h2>Ingenio Rio Grande S.A.</h2>
+    <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+    <form method="post">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="clave">Contraseña:</label>
+        <input type="password" name="clave" id="clave" required>
+      </div>
     <button type="submit">Ingresar</button>
   </form>
 </body>
