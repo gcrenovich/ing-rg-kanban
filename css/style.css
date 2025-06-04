@@ -1,9 +1,6 @@
 body {
   font-family: Arial, sans-serif;
   background: #f0f0f0;
-  display: flex;
-  justify-content: center; /* Centrado horizontal */
-  align-items: center;     /* Centrado vertical */
   margin: 0;
   padding: 0;
 }
