@@ -89,30 +89,7 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
 </form>
 
 <!-- Tabla de usuarios --> 
- <!--
-<table class="table table-bordered table-hover">
-  <thead class="table-dark">
-    <tr>
-      <th>Nombre</th><th>Email</th><th>Rol</th><th>Sector</th><th>Equipo</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php 
-    foreach ($usuarios as $u): ?>
-    <tr>
-      <td><?= $u['nombre'] ?></td>
-      <td><?= $u['email'] ?></td>
-      <td><?= $u['rol'] ?></td>
-      <td><?= $u['sector'] ?></td>
-      <td><?= $u['equipo'] ?></td>
-      <td>
-    
-        <a href="?eliminar=<?= $u['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">🗑</a>
-      </td>
-    </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>-->
+ <!---->
 
 <?php if (isset($mensaje)): ?>
   <div class="alert alert-success"><?= $mensaje ?></div>
