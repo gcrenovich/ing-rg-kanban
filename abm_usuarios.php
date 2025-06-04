@@ -88,7 +88,36 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
   </div>
 </form>
 
-<!-- Tabla de usuarios -->
+<!-- Tabla de usuarios --> 
+ <!--
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>Nombre</th><th>Email</th><th>Rol</th><th>Sector</th><th>Equipo</th><th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php 
+    foreach ($usuarios as $u): ?>
+    <tr>
+      <td><?= $u['nombre'] ?></td>
+      <td><?= $u['email'] ?></td>
+      <td><?= $u['rol'] ?></td>
+      <td><?= $u['sector'] ?></td>
+      <td><?= $u['equipo'] ?></td>
+      <td>
+    
+        <a href="?eliminar=<?= $u['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">🗑</a>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>-->
+
+<?php if (isset($mensaje)): ?>
+  <div class="alert alert-success"><?= $mensaje ?></div>
+<?php endif; ?>
+
 <table class="table table-bordered table-hover">
   <thead class="table-dark">
     <tr>
@@ -98,19 +127,37 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
   <tbody>
     <?php foreach ($usuarios as $u): ?>
     <tr>
-      <td><?= $u['nombre'] ?></td>
-      <td><?= $u['email'] ?></td>
-      <td><?= $u['rol'] ?></td>
-      <td><?= $u['sector'] ?></td>
-      <td><?= $u['equipo'] ?></td>
-      <td>
-        <!-- Solo eliminación por ahora -->
-        <a href="?eliminar=<?= $u['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">🗑</a>
-      </td>
+      <form method="POST">
+        <input type="hidden" name="editar_id" value="<?= $u['id'] ?>">
+        <td><input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($u['nombre']) ?>"></td>
+        <td><input type="email" name="email" class="form-control" value="<?= htmlspecialchars($u['email']) ?>"></td>
+        <td>
+          <select name="rol" class="form-select">
+            <option value="usuario" <?= $u['rol'] === 'usuario' ? 'selected' : '' ?>>Usuario</option>
+            <option value="admin" <?= $u['rol'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+          </select>
+        </td>
+        <td>
+          <select name="sector_id" class="form-select">
+            <?php foreach ($sectores as $s): ?>
+              <option value="<?= $s['id'] ?>" <?= $s['id'] == $u['sector_id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($s['nombre']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </td>
+        <td><input type="text" name="equipo" class="form-control" value="<?= htmlspecialchars($u['equipo']) ?>"></td>
+        <td>
+          <button type="submit" class="btn btn-primary btn-sm">💾 Guardar</button>
+          <a href="?eliminar=<?= $u['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">🗑</a>
+        </td>
+      </form>
     </tr>
     <?php endforeach; ?>
   </tbody>
 </table>
+
+
 
 </body>
 </html>
