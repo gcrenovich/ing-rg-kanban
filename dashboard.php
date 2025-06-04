@@ -1,26 +1,34 @@
 <?php
 require 'db.php';
 session_start();
+
 if (!isset($_SESSION['usuario_id'])) {
   header('Location: login.php');
   exit;
 }
+
 $sector_id = $_SESSION['sector_id'];
-//$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario FROM tareas t JOIN usuarios u ON t.usuario_id = u.id WHERE t.sector_id = ?");
 $hoy = date('Y-m-d');
 
-$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
-                        FROM tareas t
-                        JOIN usuarios u ON t.usuario_id = u.id
-                        WHERE t.sector_id = ?
-                        AND t.fecha_inicio = ?");
-$stmt->execute([$sector_id, $hoy]);
-//$stmt->execute([$sector_id]);
-$tareas = $stmt->fetchAll();
+try {
+  // 1) Consulta básica: trae todas las tareas de este sector, sin filtrar por fecha
+  $stmt = $conn->prepare("
+    SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
+    FROM tareas t
+    JOIN usuarios u ON t.usuario_id = u.id
+    WHERE t.sector_id = ?
+    ORDER BY t.fecha_creacion DESC
+  ");
+  $stmt->execute([$sector_id]);
+  $tareas = $stmt->fetchAll();
+} catch (PDOException $e) {
+  // Si algo falla, logueamos y dejamos $tareas = []
+  error_log("Error al obtener tareas: " . $e->getMessage());
+  $tareas = [];
+}
 
 include 'includes/header.php';
-include 'includes/footer.php';
-include 'includes/navbar.php'; // ✅ agregamos el menú aquí
+include 'includes/navbar.php';
 ?>
 
 <h2 style="text-align:center;">Tablero Kanban</h2>
@@ -49,50 +57,81 @@ include 'includes/navbar.php'; // ✅ agregamos el menú aquí
 </div>
 
 <div class="kanban">
+  <!--  Pendientes  -->
   <div class="columna columna-pendiente" data-estado="pendiente">
     <h3>Pendiente</h3>
     <div class="tareas">
-      <?php foreach ($tareas as $t): if ($t['estado'] === 'pendiente'): ?>
-        <div class='tarea urgencia-<?= $t['urgencia'] ?>' draggable='true'
-             data-id='<?= $t['id'] ?>'
-             data-urgencia='<?= $t['urgencia'] ?>'
-             data-usuario='<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>'
-             data-titulo='<?= strtolower(htmlspecialchars($t['titulo'])) ?>'>
-          <strong><?= htmlspecialchars($t['titulo']) ?></strong><br><small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
-        </div>
-      <?php endif; endforeach; ?>
+      <?php if (!empty($tareas)): ?>
+        <?php foreach ($tareas as $t): ?>
+          <?php if ($t['estado'] === 'pendiente'): ?>
+            <div
+              class="tarea urgencia-<?= $t['urgencia'] ?>"
+              draggable="true"
+              data-id="<?= $t['id'] ?>"
+              data-urgencia="<?= $t['urgencia'] ?>"
+              data-usuario="<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>"
+              data-titulo="<?= strtolower(htmlspecialchars($t['titulo'])) ?>"
+            >
+              <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
+              <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
+
+  <!--  En Proceso  -->
   <div class="columna columna-proceso" data-estado="proceso">
     <h3>En Proceso</h3>
     <div class="tareas">
-      <?php foreach ($tareas as $t): if ($t['estado'] === 'proceso'): ?>
-        <div class='tarea urgencia-<?= $t['urgencia'] ?>' draggable='true'
-             data-id='<?= $t['id'] ?>'
-             data-urgencia='<?= $t['urgencia'] ?>'
-             data-usuario='<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>'
-             data-titulo='<?= strtolower(htmlspecialchars($t['titulo'])) ?>'>
-          <strong><?= htmlspecialchars($t['titulo']) ?></strong><br><small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
-        </div>
-      <?php endif; endforeach; ?>
+      <?php if (!empty($tareas)): ?>
+        <?php foreach ($tareas as $t): ?>
+          <?php if ($t['estado'] === 'proceso'): ?>
+            <div
+              class="tarea urgencia-<?= $t['urgencia'] ?>"
+              draggable="true"
+              data-id="<?= $t['id'] ?>"
+              data-urgencia="<?= $t['urgencia'] ?>"
+              data-usuario="<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>"
+              data-titulo="<?= strtolower(htmlspecialchars($t['titulo'])) ?>"
+            >
+              <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
+              <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
+
+  <!--  Realizado  -->
   <div class="columna columna-realizado" data-estado="realizado">
     <h3>Realizado</h3>
     <div class="tareas">
-      <?php foreach ($tareas as $t): if ($t['estado'] === 'realizado'): ?>
-        <div class='tarea realizada urgencia-<?= $t['urgencia'] ?>' draggable='true'
-             data-id='<?= $t['id'] ?>'
-             data-urgencia='<?= $t['urgencia'] ?>'
-             data-usuario='<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>'
-             data-titulo='<?= strtolower(htmlspecialchars($t['titulo'])) ?>'>
-          <strong><?= htmlspecialchars($t['titulo']) ?></strong><br><small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
-        </div>
-      <?php endif; endforeach; ?>
+      <?php if (!empty($tareas)): ?>
+        <?php foreach ($tareas as $t): ?>
+          <?php if ($t['estado'] === 'realizado'): ?>
+            <div
+              class="tarea realizada urgencia-<?= $t['urgencia'] ?>"
+              draggable="true"
+              data-id="<?= $t['id'] ?>"
+              data-urgencia="<?= $t['urgencia'] ?>"
+              data-usuario="<?= strtolower(htmlspecialchars($t['usuario_asignado'])) ?>"
+              data-titulo="<?= strtolower(htmlspecialchars($t['titulo'])) ?>"
+            >
+              <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
+              <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 </div>
+
 <script>
+  // Paso el rol a JS para controlar movimientos en kanban.js
   window.rol = '<?= $_SESSION['rol'] ?>';
 </script>
 <script src="js/kanban.js"></script>
@@ -106,7 +145,7 @@ include 'includes/navbar.php'; // ✅ agregamos el menú aquí
     const urgencia = filtroUrgencia.value;
     const usuario = filtroUsuario.value.toLowerCase();
     const titulo = filtroTitulo.value.toLowerCase();
-    
+
     document.querySelectorAll('.tarea').forEach(tarea => {
       const tareaUrgencia = tarea.dataset.urgencia;
       const tareaUsuario = tarea.dataset.usuario;
@@ -124,4 +163,6 @@ include 'includes/navbar.php'; // ✅ agregamos el menú aquí
   filtroUsuario.addEventListener('input', aplicarFiltros);
   filtroTitulo.addEventListener('input', aplicarFiltros);
 </script>
+
 <?php include 'includes/footer.php'; ?>
+

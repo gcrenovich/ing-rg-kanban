@@ -1,32 +1,44 @@
 <?php
-include 'includes/navbar.php';
-require 'db.php';
 session_start();
+require 'db.php';
+include 'includes/navbar.php';
+
 if ($_SESSION['rol'] !== 'admin') {
   header('Location: dashboard.php');
   exit;
 }
 
+$mensaje = "";
 
-// Alta
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
-  $nombre = $_POST['nombre'];
+// Alta (solo si no es edición)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre']) && !isset($_POST['editar_id'])) {
   $email = $_POST['email'];
-  $clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);
-  $sector_id = $_POST['sector_id'];
-  $rol = $_POST['rol'];
-  $equipo = $_POST['equipo'];
+  $existe = $conn->prepare("SELECT COUNT(*) FROM usuarios WHERE email = ?");
+  $existe->execute([$email]);
 
-  $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, clave, sector_id, rol, equipo) VALUES (?, ?, ?, ?, ?, ?)");
-  $stmt->execute([$nombre, $email, $clave, $sector_id, $rol, $equipo]);
+  if ($existe->fetchColumn() > 0) {
+    $mensaje = "<div class='alert alert-danger'>❌ El email ya está registrado.</div>";
+  } else {
+    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, clave, sector_id, rol, equipo) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+      $_POST['nombre'],
+      $email,
+      password_hash($_POST['clave'], PASSWORD_DEFAULT),
+      $_POST['sector_id'],
+      $_POST['rol'],
+      $_POST['equipo']
+    ]);
+    $mensaje = "<div class='alert alert-success'>✅ Usuario agregado correctamente.</div>";
+  }
 }
 
 // Baja
 if (isset($_GET['eliminar'])) {
   $conn->prepare("DELETE FROM usuarios WHERE id = ?")->execute([$_GET['eliminar']]);
+  $mensaje = "<div class='alert alert-warning'>Usuario eliminado.</div>";
 }
 
-//modificación
+// Modificación
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_id'])) {
   $stmt = $conn->prepare("UPDATE usuarios SET nombre = ?, email = ?, equipo = ?, sector_id = ?, rol = ? WHERE id = ?");
   $stmt->execute([
@@ -37,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_id'])) {
     $_POST['rol'],
     $_POST['editar_id']
   ]);
-  $mensaje = "Usuario actualizado correctamente.";
+  $mensaje = "<div class='alert alert-success'>✅ Usuario actualizado correctamente.</div>";
 }
 
 // Obtener usuarios y sectores
@@ -53,7 +65,10 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="p-4">
+
 <h2>Gestión de Usuarios</h2>
+
+<?= $mensaje ?>
 
 <!-- Alta de usuario -->
 <form method="POST" class="row g-3 mb-4">
@@ -88,13 +103,7 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
   </div>
 </form>
 
-<!-- Tabla de usuarios --> 
- <!---->
-
-<?php if (isset($mensaje)): ?>
-  <div class="alert alert-success"><?= $mensaje ?></div>
-<?php endif; ?>
-
+<!-- Tabla de usuarios -->
 <table class="table table-bordered table-hover">
   <thead class="table-dark">
     <tr>
@@ -133,8 +142,6 @@ $sectores = $conn->query("SELECT * FROM sectores")->fetchAll();
     <?php endforeach; ?>
   </tbody>
 </table>
-
-
 
 </body>
 </html>
