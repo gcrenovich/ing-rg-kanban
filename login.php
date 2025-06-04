@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Login Kanban</title>
 </head>
 <body>
-  <div class="contenido">
+  <div class="login-container">
     <h1>Kanban - Ingreso al sistema</h1>
     <h2>Ingenio Rio Grande S.A.</h2>
     <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
@@ -33,12 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
-      </div>
+      </div></br>
       <div class="form-group">
         <label for="clave">Contraseña:</label>
         <input type="password" name="clave" id="clave" required>
+      </div></br>
+      <div class="form-group">
+        <button type="submit">Ingresar</button>
       </div>
-    <button type="submit">Ingresar</button>
   </form>
 </body>
 </html>
