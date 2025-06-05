@@ -29,11 +29,6 @@ include 'includes/navbar.php';
 
 <h2 style="text-align:center;">Tablero Kanban</h2>
 
-<!-- Botón para ocultar/mostrar columna Realizado -->
-<div class="text-center mb-3">
-  <button id="toggleRealizadas" class="btn btn-secondary">Ocultar realizadas</button>
-</div>
-
 <!-- Filtros -->
 <div class="container mb-4">
   <div class="row g-3">
@@ -61,10 +56,8 @@ include 'includes/navbar.php';
   <?php
   $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado'];
   foreach ($estados as $estado_key => $estado_label):
-    // Agregamos un ID a la columna "realizado" para ocultarla
-    $columna_id = $estado_key === 'realizado' ? 'id="columna-realizado"' : '';
   ?>
-    <div class="columna columna-<?= $estado_key ?>" data-estado="<?= $estado_key ?>" <?= $columna_id ?>>
+    <div class="columna columna-<?= $estado_key ?>" data-estado="<?= $estado_key ?>">
       <h3><?= $estado_label ?></h3>
       <div class="tareas">
         <?php foreach ($tareas as $t): if ($t['estado'] === $estado_key): ?>
@@ -98,7 +91,7 @@ include 'includes/navbar.php';
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body" id="contenido-descripcion">
-        <!-- Se llena dinámicamente -->
+        <!-- Se llena desde JS -->
       </div>
     </div>
   </div>
@@ -108,9 +101,7 @@ include 'includes/navbar.php';
   window.rol = '<?= $_SESSION['rol'] ?>';
 </script>
 <script src="js/kanban.js"></script>
-
 <script>
-  // Filtros
   const filtroUrgencia = document.getElementById('filtro-urgencia');
   const filtroUsuario = document.getElementById('filtro-usuario');
   const filtroTitulo = document.getElementById('filtro-titulo');
@@ -137,7 +128,6 @@ include 'includes/navbar.php';
   filtroUsuario.addEventListener('input', aplicarFiltros);
   filtroTitulo.addEventListener('input', aplicarFiltros);
 
-  // Mostrar detalles en modal al hacer clic en una tarea
   function mostrarDescripcion(tarea) {
     const titulo = tarea.dataset.titulo || 'Sin título';
     const desc = tarea.dataset.descripcion || 'Sin descripción';
@@ -153,20 +143,6 @@ include 'includes/navbar.php';
     document.getElementById('contenido-descripcion').innerHTML = contenido;
     new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
   }
-
-  // Toggle mostrar/ocultar columna de realizadas
-  const btnToggle = document.getElementById('toggleRealizadas');
-  const columnaRealizado = document.getElementById('columna-realizado');
-  let visible = true;
-
-  btnToggle.addEventListener('click', () => {
-    visible = !visible;
-    columnaRealizado.style.display = visible ? '' : 'none';
-    btnToggle.textContent = visible ? 'Ocultar realizadas' : 'Mostrar realizadas';
-  });
 </script>
-
-<!-- Bootstrap para el modal -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <?php include 'includes/footer.php'; ?>
