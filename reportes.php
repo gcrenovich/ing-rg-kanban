@@ -1,6 +1,6 @@
 <?php
 include 'includes/header.php';
-session_start();
+//session_start();
 require 'db.php';
 include 'includes/navbar.php';
 
