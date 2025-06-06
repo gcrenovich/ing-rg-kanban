@@ -30,9 +30,11 @@ $usuarios = $conn->query("SELECT id, nombre FROM usuarios ORDER BY nombre")->fet
       <form id="reporte-estado-form">
         <label for="estado-select">Seleccionar Estado</label>
         <select id="estado-select" class="form-select">
+          <option value="">Todos</option>
           <option value="pendiente">Pendiente</option>
           <option value="proceso">En Proceso</option>
           <option value="realizado">Realizado</option>
+          <option value="guardado">Guardado</option>
         </select>
         <button type="submit" class="btn btn-primary mt-2">Generar Reporte</button>
       </form>

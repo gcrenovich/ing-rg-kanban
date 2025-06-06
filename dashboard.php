@@ -10,6 +10,18 @@ if (!isset($_SESSION['usuario_id'])) {
 $sector_id = $_SESSION['sector_id'];
 $hoy = date('Y-m-d');
 
+// Mover tareas "realizado" a "guardado" si ya pasó la fecha_fin
+try {
+  $actualizar_guardado = $conn->prepare("UPDATE tareas SET estado = 'guardado' 
+                                         WHERE estado = 'realizado' 
+                                         AND fecha_fin < ? 
+                                         AND sector_id = ?");
+  $actualizar_guardado->execute([$hoy, $sector_id]);
+} catch (PDOException $e) {
+  error_log("Error al actualizar tareas guardadas: " . $e->getMessage());
+}
+
+
 try {
   $stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
                           FROM tareas t
@@ -54,7 +66,8 @@ include 'includes/navbar.php';
 
 <div class="kanban">
   <?php
-  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado'];
+  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado', 'guardado' => 'Guardado'];
+  // Agregar estado "guardado" si hay tareas en ese estado
   foreach ($estados as $estado_key => $estado_label):
   ?>
     <div class="columna columna-<?= $estado_key ?>" data-estado="<?= $estado_key ?>">
@@ -144,5 +157,5 @@ include 'includes/navbar.php';
     new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
   }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 <?php include 'includes/footer.php'; ?>
