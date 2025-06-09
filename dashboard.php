@@ -24,10 +24,15 @@ $hoy = date('Y-m-d');
 
 try {
   $stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
+                        FROM tareas t
+                        LEFT JOIN usuarios u ON t.usuario_id = u.id
+                        WHERE t.sector_id = ?
+                        ORDER BY t.fecha_creacion DESC");
+  /*$stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
                           FROM tareas t
                           JOIN usuarios u ON t.usuario_id = u.id
                           WHERE t.sector_id = ?
-                          ORDER BY t.fecha_creacion DESC");
+                          ORDER BY t.fecha_creacion DESC");*/
   $stmt->execute([$sector_id]);
   $tareas = $stmt->fetchAll();
 } catch (PDOException $e) {
