@@ -18,29 +18,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Login Kanban</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="login-container">
-    <h1>Kanban - Ingreso al sistema</h1>
-    <h2>Ingenio Rio Grande S.A.</h2>
+    <h1>Kanban - Ingreso</h1>
+    <h2>Ingenio Río Grande S.A.</h2>
     <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
     <form method="post">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required>
-      </div></br>
-      <div class="form-group">
-        <label for="clave">Contraseña:</label>
-        <input type="password" name="clave" id="clave" required>
-      </div></br>
-      <div class="form-group">
-        <button type="submit">Ingresar</button>
-      </div>
-  </form>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+      <input type="password" name="clave" placeholder="Contraseña" required>
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
 </body>
 </html>

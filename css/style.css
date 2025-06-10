@@ -1,60 +1,71 @@
+/* ========================
+   GLOBAL
+======================== */
 body {
   font-family: Arial, sans-serif;
-  background: #f0f0f0;
+  background-color: #f2f2f2;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* .container {
+/* ========================
+   LOGIN
+======================== */
+.login-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-} */
+  gap: 1rem;
+  text-align: center;
+}
 
-/* Login */
-    .login-container {
-      background-color: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+.login-container h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
 
-   .login-container h2 {
-      text-align: center;
-      margin: 0;
-      color: #333;
-    }
+.login-container h2 {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
 
-    .login-container input {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
+.login-container input {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+}
 
-    .login-container button {
-      padding: 0.75rem;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+.login-container button {
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    .login-container button:hover {
-      background-color: #0056b3;
-    }
+.login-container button:hover {
+  background-color: #0056b3;
+}
 
-/* kanban... */
-
+/* ========================
+   KANBAN
+======================== */
 .kanban {
   display: flex;
   justify-content: space-between;
@@ -69,17 +80,14 @@ body {
   box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
 
-/* Colores de fondo por estado */
 .columna-pendiente {
-  background-color: #fff9c4; /* amarillo claro */
+  background-color: #fff9c4;
 }
-
 .columna-proceso {
-  background-color: #d0f0ff; /* celeste claro */
+  background-color: #d0f0ff;
 }
-
 .columna-realizado {
-  background-color: #c8e6c9; /* verde claro */
+  background-color: #c8e6c9;
 }
 
 .columna h3 {
@@ -87,7 +95,7 @@ body {
   margin-top: 0;
 }
 
-/* Tarea general */
+/* Tarea */
 .tarea {
   background: #fff;
   margin-bottom: 10px;
@@ -98,7 +106,6 @@ body {
   cursor: grab;
 }
 
-/* Urgencias */
 .tarea.urgencia-alta {
   border-left-color: red;
 }
@@ -108,23 +115,21 @@ body {
 .tarea.urgencia-baja {
   border-left-color: green;
 }
-
-/* Tarea finalizada */
 .tarea.realizada {
   background-color: #e0ffe0;
   cursor: default;
 }
-
-/* Usuario asignado */
 .tarea small {
   color: #555;
   font-size: 0.85em;
 }
+
 .tareas {
   min-height: 80px;
   padding: 10px;
   border: 1px dashed #ccc;
 }
+
 .zona-activa {
   background-color: #eef;
   transition: background-color 0.2s;
