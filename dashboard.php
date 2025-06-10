@@ -8,15 +8,18 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $sector_id = $_SESSION['sector_id'];
-$usuario_id = $_SESSION['usuario_id'];
 $hoy = date('Y-m-d');
+
+
+
 
 try {
   $stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
-                          FROM tareas t
-                          LEFT JOIN usuarios u ON t.usuario_id = u.id
-                          WHERE t.sector_id = ?
-                          ORDER BY t.fecha_creacion DESC");
+                        FROM tareas t
+                        LEFT JOIN usuarios u ON t.usuario_id = u.id
+                        WHERE t.sector_id = ?
+                        ORDER BY t.fecha_creacion DESC");
+ 
   $stmt->execute([$sector_id]);
   $tareas = $stmt->fetchAll();
 } catch (PDOException $e) {
@@ -55,7 +58,8 @@ include 'includes/navbar.php';
 
 <div class="kanban">
   <?php
-  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado'];
+  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado', /*'guardado' => 'Guardado'*/];
+  // Agregar estado "guardado" si hay tareas en ese estado
   foreach ($estados as $estado_key => $estado_label):
   ?>
     <div class="columna columna-<?= $estado_key ?>" data-estado="<?= $estado_key ?>">
@@ -72,12 +76,10 @@ include 'includes/navbar.php';
             data-descripcion="<?= htmlspecialchars($t['descripcion']) ?>"
             data-fecha_inicio="<?= $t['fecha_inicio'] ?>"
             data-fecha_fin="<?= $t['fecha_fin'] ?>"
-            data-asignada="<?= $t['usuario_id'] ? '1' : '0' ?>"
-            data-estado="<?= $t['estado'] ?>"
             onclick="mostrarDescripcion(this)"
           >
             <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
-            <small><?= htmlspecialchars($t['usuario_asignado'] ?? 'No asignado') ?></small>
+            <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
           </div>
         <?php endif; endforeach; ?>
       </div>
@@ -102,7 +104,6 @@ include 'includes/navbar.php';
 
 <script>
   window.rol = '<?= $_SESSION['rol'] ?>';
-  window.usuarioId = '<?= $_SESSION['usuario_id'] ?>';
 </script>
 <script src="js/kanban.js"></script>
 <script>
@@ -133,30 +134,17 @@ include 'includes/navbar.php';
   filtroTitulo.addEventListener('input', aplicarFiltros);
 
   function mostrarDescripcion(tarea) {
-    const id = tarea.dataset.id;
     const titulo = tarea.dataset.titulo || 'Sin título';
     const desc = tarea.dataset.descripcion || 'Sin descripción';
     const inicio = tarea.dataset.fecha_inicio || '—';
     const fin = tarea.dataset.fecha_fin || '—';
-    const asignada = tarea.dataset.asignada === '1';
-    const estado = tarea.dataset.estado;
 
-    let contenido = `
+    const contenido = `
       <h5 class="mb-2">${titulo}</h5>
       <p><strong>Descripción:</strong> ${desc}</p>
       <p><strong>Inicio:</strong> ${inicio}</p>
       <p><strong>Fin:</strong> ${fin}</p>
     `;
-
-    if (!asignada && estado === 'pendiente') {
-      contenido += `
-        <form method="POST" action="tomar_tarea.php">
-          <input type="hidden" name="tarea_id" value="${id}">
-          <button type="submit" class="btn btn-success">Tomar esta tarea</button>
-        </form>
-      `;
-    }
-
     document.getElementById('contenido-descripcion').innerHTML = contenido;
     new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
   }
