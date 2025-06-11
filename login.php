@@ -1,4 +1,4 @@
-<?php
+<?php 
 require 'db.php';
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -24,10 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Login Kanban</title>
-<link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<!--<body>
+<body class="login-body">
   <div class="login-container">
+    <img src="img/logo.png" alt="Logo">
     <h1>Kanban - Ingreso</h1>
     <h2>Ingenio Río Grande S.A.</h2>
     <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
@@ -37,22 +38,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit">Ingresar</button>
     </form>
   </div>
-</body>-->
-<body class="login-body">
-  <div class="login-wrapper">
-    <div class="login-container">
-      <img src="img/logo.png" alt="Logo Kanban" class="login-logo">
-      <h1>Kanban - Ingreso</h1>
-      <h2>Ingenio Río Grande S.A.</h2>
-      <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
-      <form method="post">
-        <input type="email" name="email" placeholder="Correo electrónico" required>
-        <input type="password" name="clave" placeholder="Contraseña" required>
-        <button type="submit">Ingresar</button>
-      </form>
-    </div>
-  </div>
 </body>
-
-
 </html>
