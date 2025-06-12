@@ -10,14 +10,11 @@ if (!isset($_SESSION['usuario_id'])) {
 $sector_id = $_SESSION['sector_id'];
 $hoy = date('Y-m-d');
 
-
-
-
 try {
   $stmt = $conn->prepare("SELECT t.*, u.nombre AS usuario_asignado, u.equipo AS equipo_usuario
                         FROM tareas t
                         LEFT JOIN usuarios u ON t.usuario_id = u.id
-                        WHERE t.sector_id = ?
+                        WHERE t.sector_id = ? AND t.estado != 'guardado'
                         ORDER BY t.fecha_creacion DESC");
  
   $stmt->execute([$sector_id]);
@@ -58,8 +55,7 @@ include 'includes/navbar.php';
 
 <div class="kanban">
   <?php
-  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado', /*'guardado' => 'Guardado'*/];
-  // Agregar estado "guardado" si hay tareas en ese estado
+  $estados = ['pendiente' => 'Pendiente', 'proceso' => 'En Proceso', 'realizado' => 'Realizado'];
   foreach ($estados as $estado_key => $estado_label):
   ?>
     <div class="columna columna-<?= $estado_key ?>" data-estado="<?= $estado_key ?>">
@@ -80,6 +76,10 @@ include 'includes/navbar.php';
           >
             <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
             <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
+
+            <?php if ($estado_key === 'realizado'): ?>
+              <button class="btn btn-sm btn-success mt-2" onclick="guardarTarea(event, <?= $t['id'] ?>)">Guardar</button>
+            <?php endif; ?>
           </div>
         <?php endif; endforeach; ?>
       </div>
@@ -96,7 +96,6 @@ include 'includes/navbar.php';
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body" id="contenido-descripcion">
-        <!-- Se llena desde JS -->
       </div>
     </div>
   </div>
@@ -106,6 +105,7 @@ include 'includes/navbar.php';
   window.rol = '<?= $_SESSION['rol'] ?>';
 </script>
 <script src="js/kanban.js"></script>
+
 <script>
   const filtroUrgencia = document.getElementById('filtro-urgencia');
   const filtroUsuario = document.getElementById('filtro-usuario');
@@ -148,6 +148,26 @@ include 'includes/navbar.php';
     document.getElementById('contenido-descripcion').innerHTML = contenido;
     new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
   }
+
+  function guardarTarea(event, tareaId) {
+    event.stopPropagation();
+    if (!confirm("¿Está seguro que desea guardar esta tarea?")) return;
+
+    fetch('guardar_tarea.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'id=' + tareaId
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert(data);
+      location.reload();
+    })
+    .catch(err => {
+      alert("Error: " + err);
+    });
+  }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php include 'includes/footer.php'; ?>
