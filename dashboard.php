@@ -16,7 +16,6 @@ try {
                         LEFT JOIN usuarios u ON t.usuario_id = u.id
                         WHERE t.sector_id = ? AND t.estado != 'guardado'
                         ORDER BY t.fecha_creacion DESC");
- 
   $stmt->execute([$sector_id]);
   $tareas = $stmt->fetchAll();
 } catch (PDOException $e) {
@@ -72,14 +71,11 @@ include 'includes/navbar.php';
             data-descripcion="<?= htmlspecialchars($t['descripcion']) ?>"
             data-fecha_inicio="<?= $t['fecha_inicio'] ?>"
             data-fecha_fin="<?= $t['fecha_fin'] ?>"
+            data-estado="<?= $t['estado'] ?>"
             onclick="mostrarDescripcion(this)"
           >
             <strong><?= htmlspecialchars($t['titulo']) ?></strong><br>
             <small><?= htmlspecialchars($t['usuario_asignado']) ?></small>
-
-            <?php if ($estado_key === 'realizado'): ?>
-              <button class="btn btn-sm btn-success mt-2" onclick="guardarTarea(event, <?= $t['id'] ?>)">Guardar</button>
-            <?php endif; ?>
           </div>
         <?php endif; endforeach; ?>
       </div>
@@ -87,7 +83,7 @@ include 'includes/navbar.php';
   <?php endforeach; ?>
 </div>
 
-<!-- Modal de Descripción -->
+<!-- Modal -->
 <div class="modal fade" id="modalDescripcion" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -95,8 +91,7 @@ include 'includes/navbar.php';
         <h5 class="modal-title">Detalles de la Tarea</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <div class="modal-body" id="contenido-descripcion">
-      </div>
+      <div class="modal-body" id="contenido-descripcion"></div>
     </div>
   </div>
 </div>
@@ -104,69 +99,77 @@ include 'includes/navbar.php';
 <script>
   window.rol = '<?= $_SESSION['rol'] ?>';
 </script>
+
 <script src="js/kanban.js"></script>
 
 <script>
-  const filtroUrgencia = document.getElementById('filtro-urgencia');
-  const filtroUsuario = document.getElementById('filtro-usuario');
-  const filtroTitulo = document.getElementById('filtro-titulo');
+const filtroUrgencia = document.getElementById('filtro-urgencia');
+const filtroUsuario = document.getElementById('filtro-usuario');
+const filtroTitulo = document.getElementById('filtro-titulo');
 
-  function aplicarFiltros() {
-    const urgencia = filtroUrgencia.value;
-    const usuario = filtroUsuario.value.toLowerCase();
-    const titulo = filtroTitulo.value.toLowerCase();
+function aplicarFiltros() {
+  const urgencia = filtroUrgencia.value;
+  const usuario = filtroUsuario.value.toLowerCase();
+  const titulo = filtroTitulo.value.toLowerCase();
 
-    document.querySelectorAll('.tarea').forEach(tarea => {
-      const tareaUrgencia = tarea.dataset.urgencia;
-      const tareaUsuario = tarea.dataset.usuario;
-      const tareaTitulo = tarea.dataset.titulo.toLowerCase();
+  document.querySelectorAll('.tarea').forEach(tarea => {
+    const tareaUrgencia = tarea.dataset.urgencia;
+    const tareaUsuario = tarea.dataset.usuario;
+    const tareaTitulo = tarea.dataset.titulo.toLowerCase();
 
-      const coincideUrgencia = !urgencia || tareaUrgencia === urgencia;
-      const coincideUsuario = !usuario || tareaUsuario.includes(usuario);
-      const coincideTitulo = !titulo || tareaTitulo.includes(titulo);
+    const coincideUrgencia = !urgencia || tareaUrgencia === urgencia;
+    const coincideUsuario = !usuario || tareaUsuario.includes(usuario);
+    const coincideTitulo = !titulo || tareaTitulo.includes(titulo);
 
-      tarea.style.display = (coincideUrgencia && coincideUsuario && coincideTitulo) ? '' : 'none';
-    });
+    tarea.style.display = (coincideUrgencia && coincideUsuario && coincideTitulo) ? '' : 'none';
+  });
+}
+
+filtroUrgencia.addEventListener('change', aplicarFiltros);
+filtroUsuario.addEventListener('input', aplicarFiltros);
+filtroTitulo.addEventListener('input', aplicarFiltros);
+
+function mostrarDescripcion(tarea) {
+  const titulo = tarea.dataset.titulo || 'Sin título';
+  const desc = tarea.dataset.descripcion || 'Sin descripción';
+  const inicio = tarea.dataset.fecha_inicio || '—';
+  const fin = tarea.dataset.fecha_fin || '—';
+  const estado = tarea.dataset.estado;
+  const idTarea = tarea.dataset.id;
+
+  let contenido = `
+    <h5 class="mb-2">${titulo}</h5>
+    <p><strong>Descripción:</strong> ${desc}</p>
+    <p><strong>Inicio:</strong> ${inicio}</p>
+    <p><strong>Fin:</strong> ${fin}</p>
+  `;
+
+  if (estado === 'realizado') {
+    contenido += `<button class="btn btn-success mt-3" onclick="guardarTarea(event, ${idTarea})">Guardar</button>`;
   }
 
-  filtroUrgencia.addEventListener('change', aplicarFiltros);
-  filtroUsuario.addEventListener('input', aplicarFiltros);
-  filtroTitulo.addEventListener('input', aplicarFiltros);
+  document.getElementById('contenido-descripcion').innerHTML = contenido;
+  new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
+}
 
-  function mostrarDescripcion(tarea) {
-    const titulo = tarea.dataset.titulo || 'Sin título';
-    const desc = tarea.dataset.descripcion || 'Sin descripción';
-    const inicio = tarea.dataset.fecha_inicio || '—';
-    const fin = tarea.dataset.fecha_fin || '—';
+function guardarTarea(event, tareaId) {
+  event.stopPropagation();
+  if (!confirm("¿Está seguro que desea guardar esta tarea?")) return;
 
-    const contenido = `
-      <h5 class="mb-2">${titulo}</h5>
-      <p><strong>Descripción:</strong> ${desc}</p>
-      <p><strong>Inicio:</strong> ${inicio}</p>
-      <p><strong>Fin:</strong> ${fin}</p>
-    `;
-    document.getElementById('contenido-descripcion').innerHTML = contenido;
-    new bootstrap.Modal(document.getElementById('modalDescripcion')).show();
-  }
-
-  function guardarTarea(event, tareaId) {
-    event.stopPropagation();
-    if (!confirm("¿Está seguro que desea guardar esta tarea?")) return;
-
-    fetch('guardar_tarea.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'id=' + tareaId
-    })
-    .then(response => response.text())
-    .then(data => {
-      alert(data);
-      location.reload();
-    })
-    .catch(err => {
-      alert("Error: " + err);
-    });
-  }
+  fetch('guardar_tarea.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'id=' + tareaId
+  })
+  .then(response => response.text())
+  .then(data => {
+    alert(data);
+    location.reload();
+  })
+  .catch(err => {
+    alert("Error: " + err);
+  });
+}
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

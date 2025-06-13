@@ -2,74 +2,67 @@
 require '../db.php';
 session_start();
 
+if (!isset($_SESSION['usuario_id'])) {
+  http_response_code(403);
+  exit("Acceso no autorizado");
+}
+
 $sector_id = $_SESSION['sector_id'];
+
+// Captura de filtros
 $usuario_id = $_GET['usuario_id'] ?? '';
 $estado = $_GET['estado'] ?? '';
 
-// Armamos la query dinámica:
-$sql = "
-  SELECT 
-    t.id, t.titulo, t.estado, t.fecha_creacion,
-    MONTH(t.fecha_creacion) AS mes,
-    YEAR(t.fecha_creacion) AS anio,
-    u.nombre AS usuario
-  FROM tareas t
-  LEFT JOIN usuarios u ON t.usuario_id = u.id
-  WHERE t.sector_id = ?
-";
-
+// Armado de filtros dinámicos
+$filtros = "WHERE t.sector_id = ?";
 $params = [$sector_id];
 
-// Si filtra por usuario
-if ($usuario_id) {
-  $sql .= " AND t.usuario_id = ?";
+if (!empty($usuario_id)) {
+  $filtros .= " AND t.usuario_id = ?";
   $params[] = $usuario_id;
 }
 
-// Si filtra por estado
-if ($estado) {
-  $sql .= " AND t.estado = ?";
+if (!empty($estado)) {
+  $filtros .= " AND t.estado = ?";
   $params[] = $estado;
 }
 
-$sql .= " ORDER BY anio DESC, mes DESC, t.fecha_creacion DESC";
+$sql = "
+  SELECT t.*, u.nombre AS usuario_nombre, 
+         DATE_FORMAT(t.fecha_creacion, '%Y-%m') AS mes_anio
+  FROM tareas t
+  LEFT JOIN usuarios u ON t.usuario_id = u.id
+  $filtros
+  ORDER BY mes_anio DESC, t.estado, t.fecha_creacion DESC
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->execute($params);
 $tareas = $stmt->fetchAll();
 
-if (empty($tareas)) {
-  echo "<div class='alert alert-info'>No se encontraron tareas.</div>";
+if (count($tareas) === 0) {
+  echo "<p class='alert alert-warning'>No se encontraron tareas según los filtros.</p>";
   exit;
 }
 
-// Agrupar por año y mes
-$reporte = [];
-
-foreach ($tareas as $t) {
-  $key = "{$t['anio']}-{$t['mes']}";
-  if (!isset($reporte[$key])) $reporte[$key] = [];
-  $reporte[$key][] = $t;
+// Agrupamos por mes y estado:
+$agrupado = [];
+foreach ($tareas as $fila) {
+  $mes = $fila['mes_anio'];
+  $estado_actual = $fila['estado'];
+  $agrupado[$mes][$estado_actual][] = $fila;
 }
 
-// Mostrar reporte agrupado
-foreach ($reporte as $periodo => $lista) {
-  [$anio, $mes] = explode('-', $periodo);
-  $mes_nombre = date('F', mktime(0, 0, 0, $mes, 1));
-
-  echo "<h4 class='mt-4'>$mes_nombre $anio</h4>";
-  echo "<table class='table table-sm table-bordered'>";
-  echo "<thead><tr><th>Título</th><th>Estado</th><th>Usuario</th><th>Fecha Creación</th></tr></thead><tbody>";
-
-  foreach ($lista as $t) {
-    echo "<tr>";
-    echo "<td>".htmlspecialchars($t['titulo'])."</td>";
-    echo "<td>".ucfirst($t['estado'])."</td>";
-    echo "<td>".($t['usuario'] ?: 'No asignado')."</td>";
-    echo "<td>".$t['fecha_creacion']."</td>";
-    echo "</tr>";
+// Render del reporte:
+foreach ($agrupado as $mes => $estados) {
+  echo "<h4 class='mt-4'>Mes: $mes</h4>";
+  foreach ($estados as $estado_label => $grupo_tareas) {
+    echo "<h5>Estado: " . ucfirst($estado_label) . " (" . count($grupo_tareas) . " tareas)</h5>";
+    echo "<ul>";
+    foreach ($grupo_tareas as $t) {
+      echo "<li><strong>" . htmlspecialchars($t['titulo']) . "</strong> - " . htmlspecialchars($t['usuario_nombre'] ?? 'Sin usuario') . "</li>";
+    }
+    echo "</ul>";
   }
-
-  echo "</tbody></table>";
 }
 ?>
