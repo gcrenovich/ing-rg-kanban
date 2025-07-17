@@ -3,16 +3,23 @@ session_start();
 require 'db.php'; // Conexión a la base
 
 // Verificación de acceso
-if (!isset($_SESSION['usuario'])) {
+/* if (!isset($_SESSION['usuario'])) {
   header('Location: dashboard.php');
     exit;
-}
+} */
 /* 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
   header('Location: dashboard.php');
   exit;
 }
  */
+if ($_SESSION['rol'] != 'admin') {
+    $sector = $_SESSION['sector'];
+    $sql = "SELECT * FROM inventario_dispositivos WHERE sector = '$sector'";
+} else {
+    $sql = "SELECT * FROM inventario_dispositivos";
+}
+
 include 'includes/navbar.php'; // Menú de navegación
 // Variables de sesión
 $rol = $_SESSION['rol'];
