@@ -18,7 +18,7 @@ try {
     die('Error de conexión: ' . $e->getMessage());
 }
 ?>
-// 🔧 Agregamos conexión mysqli para los módulos que la usan:
+
 
 <?php
 $host = 'localhost';
