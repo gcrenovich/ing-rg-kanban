@@ -2,34 +2,32 @@
 session_start();
 require 'db.php'; // Conexión a la base
 
-// Verificación de acceso
-/* if (!isset($_SESSION['usuario'])) {
-  header('Location: dashboard.php');
+// Verificación de acceso: solo usuarios logueados
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.php');
     exit;
-} */
-/* 
-if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
-  header('Location: dashboard.php');
-  exit;
-}
- */
-if ($_SESSION['rol'] != 'admin') {
-    $sector = $_SESSION['sector'];
-    $sql = "SELECT * FROM inventario_dispositivos WHERE sector = '$sector'";
-} else {
-    $sql = "SELECT * FROM inventario_dispositivos";
 }
 
-include 'includes/navbar.php'; // Menú de navegación
 // Variables de sesión
 $rol = $_SESSION['rol'];
-$sector_id = $_SESSION['sector'];
+$sector_id = $_SESSION['sector_id']; // El sector se maneja como ID
 
-// Consulta de inventario por sector
+include 'includes/navbar.php'; // Menú de navegación
+
+// Consulta de inventario con sector_id y join a sectores
 if ($rol == 'admin') {
-    $sql = "SELECT * FROM inventario_dispositivos ORDER BY fecha_registro DESC";
+    // Si es admin, ve todos los dispositivos y muestra el nombre del sector
+    $sql = "SELECT d.*, s.nombre AS sector_nombre 
+            FROM inventario_dispositivos d
+            JOIN sectores s ON d.sector_id = s.id
+            ORDER BY d.fecha_registro DESC";
 } else {
-    $sql = "SELECT * FROM inventario_dispositivos WHERE sector = '$sector_id' ORDER BY fecha_registro DESC";
+    // Si es usuario, ve solo los dispositivos de su sector
+    $sql = "SELECT d.*, s.nombre AS sector_nombre 
+            FROM inventario_dispositivos d
+            JOIN sectores s ON d.sector_id = s.id
+            WHERE d.sector_id = $sector_id
+            ORDER BY d.fecha_registro DESC";
 }
 
 $result = mysqli_query($conexion, $sql);
@@ -70,7 +68,7 @@ $result = mysqli_query($conexion, $sql);
                 <td><?php echo htmlspecialchars($row['numero_serie']); ?></td>
                 <td><?php echo htmlspecialchars($row['ip']); ?></td>
                 <td><?php echo htmlspecialchars($row['usuario_asignado']); ?></td>
-                <td><?php echo htmlspecialchars($row['sector']); ?></td>
+                <td><?php echo htmlspecialchars($row['sector_nombre']); ?></td> <!-- Muestra el nombre del sector -->
                 <td><?php echo htmlspecialchars($row['estado']); ?></td>
                 <td><?php echo htmlspecialchars($row['fecha_registro']); ?></td>
                 <td>

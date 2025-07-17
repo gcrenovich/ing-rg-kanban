@@ -1,19 +1,21 @@
 <?php
 session_start();
 include 'db.php'; // Conexión a la base
-include 'includes/navbar.php'; // Menú de navegación actualizado
+include 'includes/navbar.php'; // Menú de navegación
 
-// Verificación de acceso
-if (!isset($_SESSION['usuario'])) {
+// Verificación de acceso: solo usuarios logueados
+if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
 }
 
+// Variables de sesión
 $rol = $_SESSION['rol'];
-$sector_usuario = $_SESSION['sector'];
+$sector_id = $_SESSION['sector_id']; // Sector del usuario logueado
 
 // Si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Captura de datos del formulario
     $tipo_dispositivo = $_POST['tipo_dispositivo'];
     $marca = $_POST['marca'];
     $modelo = $_POST['modelo'];
@@ -24,18 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fecha_registro = $_POST['fecha_registro'];
     $observaciones = $_POST['observaciones'];
 
-    // Definir el sector según el rol
+    // Definir el sector_id según el rol
     if ($rol == 'admin') {
-        $sector = $_POST['sector'];
-    } else {
-        $sector = $sector_usuario;
+        // Admin elige el sector con un select
+        $sector_id = $_POST['sector_id'];
     }
+    // Si es usuario común, se usa el sector de sesión
 
-    // Insertar en la base
+    // Inserción en la tabla (sector_id en vez de sector)
     $sql = "INSERT INTO inventario_dispositivos 
-        (tipo_dispositivo, marca, modelo, numero_serie, ip, usuario_asignado, sector, estado, fecha_registro, observaciones)
+        (tipo_dispositivo, marca, modelo, numero_serie, ip, usuario_asignado, sector_id, estado, fecha_registro, observaciones)
         VALUES 
-        ('$tipo_dispositivo', '$marca', '$modelo', '$numero_serie', '$ip', '$usuario_asignado', '$sector', '$estado', '$fecha_registro', '$observaciones')";
+        ('$tipo_dispositivo', '$marca', '$modelo', '$numero_serie', '$ip', '$usuario_asignado', $sector_id, '$estado', '$fecha_registro', '$observaciones')";
 
     if (mysqli_query($conexion, $sql)) {
         header('Location: inventario.php');
@@ -97,9 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <?php if ($rol == 'admin'): ?>
+            <!-- Si es admin, elige el sector desde un select -->
             <div class="mb-3">
                 <label>Sector</label>
-                <input type="text" name="sector" class="form-control" required>
+                <select name="sector_id" class="form-control" required>
+                    <option value="">Seleccione un sector...</option>
+                    <?php
+                    $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores");
+                    while($s = mysqli_fetch_assoc($sectores)):
+                    ?>
+                        <option value="<?php echo $s['id']; ?>"><?php echo $s['nombre']; ?></option>
+                    <?php endwhile; ?>
+                </select>
             </div>
         <?php endif; ?>
 

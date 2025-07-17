@@ -3,14 +3,14 @@ session_start();
 include 'db.php';
 include 'includes/navbar.php';
 
-// Verificación de acceso
-if (!isset($_SESSION['usuario'])) {
+// Verificación de acceso: solo usuarios logueados
+if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
 }
 
 $rol = $_SESSION['rol'];
-$sector_usuario = $_SESSION['sector'];
+$sector_usuario = $_SESSION['sector_id']; // Sector en ID
 
 // Obtener ID del dispositivo
 $id = $_GET['id'] ?? null;
@@ -19,8 +19,11 @@ if (!$id) {
     exit;
 }
 
-// Obtener datos actuales
-$sql = "SELECT * FROM inventario_dispositivos WHERE id = $id";
+// Obtener datos actuales del dispositivo con nombre de sector
+$sql = "SELECT d.*, s.nombre AS sector_nombre 
+        FROM inventario_dispositivos d
+        JOIN sectores s ON d.sector_id = s.id
+        WHERE d.id = $id";
 $result = mysqli_query($conexion, $sql);
 $dispositivo = mysqli_fetch_assoc($result);
 
@@ -30,13 +33,14 @@ if (!$dispositivo) {
 }
 
 // Verificación de permisos por sector
-if ($rol != 'admin' && $dispositivo['sector'] != $sector_usuario) {
+if ($rol != 'admin' && $dispositivo['sector_id'] != $sector_usuario) {
     echo "Acceso denegado. Solo puede editar dispositivos de su sector.";
     exit;
 }
 
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Datos del formulario
     $tipo_dispositivo = $_POST['tipo_dispositivo'];
     $marca = $_POST['marca'];
     $modelo = $_POST['modelo'];
@@ -47,12 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fecha_registro = $_POST['fecha_registro'];
     $observaciones = $_POST['observaciones'];
 
+    // Definir sector_id según el rol
     if ($rol == 'admin') {
-        $sector = $_POST['sector'];
+        $sector_id = $_POST['sector_id'];
     } else {
-        $sector = $sector_usuario;
+        $sector_id = $sector_usuario;
     }
 
+    // Actualizar dispositivo
     $sql_update = "UPDATE inventario_dispositivos SET 
         tipo_dispositivo='$tipo_dispositivo',
         marca='$marca',
@@ -60,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         numero_serie='$numero_serie',
         ip='$ip',
         usuario_asignado='$usuario_asignado',
-        sector='$sector',
+        sector_id=$sector_id,
         estado='$estado',
         fecha_registro='$fecha_registro',
         observaciones='$observaciones'
@@ -127,7 +133,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($rol == 'admin'): ?>
             <div class="mb-3">
                 <label>Sector</label>
-                <input type="text" name="sector" class="form-control" required value="<?php echo htmlspecialchars($dispositivo['sector']); ?>">
+                <select name="sector_id" class="form-control" required>
+                    <?php
+                    $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores");
+                    while($s = mysqli_fetch_assoc($sectores)):
+                        $selected = ($s['id'] == $dispositivo['sector_id']) ? 'selected' : '';
+                    ?>
+                        <option value="<?php echo $s['id']; ?>" <?php echo $selected; ?>>
+                            <?php echo $s['nombre']; ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
             </div>
         <?php endif; ?>
 
