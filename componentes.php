@@ -84,26 +84,33 @@ $result_componentes = mysqli_query($conexion, $sql_componentes);
         <button type="submit" class="btn btn-primary">Agregar Componente</button>
         <a href="inventario.php" class="btn btn-secondary">Volver</a>
     </form>
-
     <h5>Lista de Componentes</h5>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Componente</th>
-                <th>Detalle</th>
-                <th>Fecha Instalación</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while($comp = mysqli_fetch_assoc($result_componentes)): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($comp['componente']); ?></td>
-                <td><?php echo htmlspecialchars($comp['detalle']); ?></td>
-                <td><?php echo htmlspecialchars($comp['fecha_instalacion']); ?></td>
-            </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Componente</th>
+            <th>Detalle</th>
+            <th>Fecha Instalación</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php while($comp = mysqli_fetch_assoc($result_componentes)): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($comp['componente']); ?></td>
+            <td><?php echo htmlspecialchars($comp['detalle']); ?></td>
+            <td><?php echo htmlspecialchars($comp['fecha_instalacion']); ?></td>
+            <td>
+                <a href="eliminar_componente.php?id=<?php echo $comp['id']; ?>" 
+                   class="btn btn-sm btn-danger" 
+                   onclick="return confirm('¿Seguro que quieres eliminar este componente?');">
+                   Eliminar
+                </a>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
 </div>
 </body>
 </html>
