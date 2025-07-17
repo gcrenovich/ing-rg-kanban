@@ -64,6 +64,11 @@ $result = mysqli_query($conexion, $sql);
                 <td>
                     <a href="editar_dispositivo.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning">Editar</a>
                     <a href="componentes.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">Componentes</a>
+                    <a href="eliminar_dispositivo.php?id=<?php echo $row['id']; ?>" 
+                        class="btn btn-sm btn-danger"
+                        onclick="return confirm('¿Seguro que quieres eliminar este dispositivo? Esto eliminará también sus componentes.');">
+                        Eliminar
+                    </a>
                 </td>
             </tr>
             <?php endwhile; ?>
