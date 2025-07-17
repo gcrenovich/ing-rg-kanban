@@ -11,13 +11,13 @@ if (!isset($_SESSION['usuario'])) {
 include 'includes/navbar.php'; // Menú de navegación
 // Variables de sesión
 $rol = $_SESSION['rol'];
-$sector_usuario = $_SESSION['sector'];
+$sector_id = $_SESSION['sector'];
 
 // Consulta de inventario por sector
 if ($rol == 'admin') {
     $sql = "SELECT * FROM inventario_dispositivos ORDER BY fecha_registro DESC";
 } else {
-    $sql = "SELECT * FROM inventario_dispositivos WHERE sector = '$sector_usuario' ORDER BY fecha_registro DESC";
+    $sql = "SELECT * FROM inventario_dispositivos WHERE sector = '$sector_id' ORDER BY fecha_registro DESC";
 }
 
 $result = mysqli_query($conexion, $sql);
