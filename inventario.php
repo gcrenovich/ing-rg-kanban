@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'db.php'; // Conexión a la base
+include 'includes/header.php';  // Carga CSS, estructura inicial y navbar
 
 // Verificación de acceso: solo usuarios logueados
 if (!isset($_SESSION['usuario_id'])) {
@@ -87,3 +88,4 @@ $result = mysqli_query($conexion, $sql);
 </div>
 </body>
 </html>
+<?php include 'includes/footer.php'; ?>
