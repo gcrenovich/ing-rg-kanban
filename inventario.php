@@ -4,10 +4,15 @@ require 'db.php'; // Conexión a la base
 
 // Verificación de acceso
 if (!isset($_SESSION['usuario'])) {
-    header('Location: login.php');
+  header('Location: dashboard.php');
     exit;
 }
-
+/* 
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
+  header('Location: dashboard.php');
+  exit;
+}
+ */
 include 'includes/navbar.php'; // Menú de navegación
 // Variables de sesión
 $rol = $_SESSION['rol'];
