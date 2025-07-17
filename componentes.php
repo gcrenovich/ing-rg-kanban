@@ -2,6 +2,7 @@
 session_start();
 include 'db.php';
 include 'includes/navbar.php';
+include 'includes/header.php';  // Carga CSS, estructura inicial y navbar
 
 // Verificación de acceso
 if (!isset($_SESSION['usuario_id'])) {
@@ -117,3 +118,4 @@ $result_componentes = mysqli_query($conexion, $sql_componentes);
 </div>
 </body>
 </html>
+<?php include 'includes/footer.php'; ?>
