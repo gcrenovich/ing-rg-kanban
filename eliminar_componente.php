@@ -2,6 +2,7 @@
 session_start();
 include 'db.php';
 
+
 // Verificación de acceso: solo usuarios logueados
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');

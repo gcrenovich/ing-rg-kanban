@@ -2,6 +2,8 @@
 session_start();
 include 'db.php'; // Conexión a la base
 include 'includes/navbar.php'; // Menú de navegación
+include 'includes/header.php';  // Carga CSS, estructura inicial y navbar
+
 
 // Verificación de acceso: solo usuarios logueados
 if (!isset($_SESSION['usuario_id'])) {
@@ -139,3 +141,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 </body>
 </html>
+<?php include 'includes/footer.php'; ?>
