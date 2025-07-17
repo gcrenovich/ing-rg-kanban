@@ -2,13 +2,14 @@
 session_start();
 include 'db.php';
 
-if (!isset($_SESSION['usuario'])) {
+// Verificación de acceso: solo usuarios logueados
+if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
 }
 
 $rol = $_SESSION['rol'];
-$sector_usuario = $_SESSION['sector'];
+$sector_usuario = $_SESSION['sector_id']; // Sector en ID
 
 $id_componente = $_GET['id'] ?? null;
 
@@ -17,8 +18,8 @@ if (!$id_componente) {
     exit;
 }
 
-// Verificar componente y permisos
-$sql = "SELECT c.*, d.sector 
+// Verificar componente y permisos: usamos sector_id
+$sql = "SELECT c.*, d.sector_id, d.id as dispositivo_id
         FROM inventario_componentes c
         JOIN inventario_dispositivos d ON c.dispositivo_id = d.id
         WHERE c.id = $id_componente";
@@ -31,7 +32,8 @@ if (!$componente) {
     exit;
 }
 
-if ($rol != 'admin' && $componente['sector'] != $sector_usuario) {
+// Control de acceso por sector_id
+if ($rol != 'admin' && $componente['sector_id'] != $sector_usuario) {
     echo "Acceso denegado.";
     exit;
 }
