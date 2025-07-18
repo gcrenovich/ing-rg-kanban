@@ -1,26 +1,23 @@
 <?php
 session_start();
 include 'db.php';
-include 'includes/navbar.php';
-include 'includes/header.php';  // Carga CSS, estructura inicial y navbar
+include 'includes/header.php';
 
-// Verificación de acceso: solo usuarios logueados
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
 }
 
 $rol = $_SESSION['rol'];
-$sector_usuario = $_SESSION['sector_id']; // Sector en ID
+$sector_usuario = $_SESSION['sector_id'];
 
-// Obtener ID del dispositivo
 $id = $_GET['id'] ?? null;
 if (!$id) {
     echo "ID de dispositivo no especificado.";
     exit;
 }
 
-// Obtener datos actuales del dispositivo con nombre de sector
+// Obtener datos actuales con sector
 $sql = "SELECT d.*, s.nombre AS sector_nombre 
         FROM inventario_dispositivos d
         JOIN sectores s ON d.sector_id = s.id
@@ -33,17 +30,16 @@ if (!$dispositivo) {
     exit;
 }
 
-// Verificación de permisos por sector
+// Verificación de permisos
 if ($rol != 'admin' && $dispositivo['sector_id'] != $sector_usuario) {
-    echo "Acceso denegado. Solo puede editar dispositivos de su sector.";
+    echo "Acceso denegado.";
     exit;
 }
 
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Datos del formulario
     $tipo_dispositivo = $_POST['tipo_dispositivo'];
-    $marca = $_POST['marca'];
+    $marca_id = $_POST['marca_id'];
     $modelo = $_POST['modelo'];
     $numero_serie = $_POST['numero_serie'];
     $ip = $_POST['ip'];
@@ -51,18 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $estado = $_POST['estado'];
     $fecha_registro = $_POST['fecha_registro'];
     $observaciones = $_POST['observaciones'];
+    $procesador_id = $_POST['procesador_id'] ?? NULL;
+    $memoria_ram_id = $_POST['memoria_ram_id'] ?? NULL;
 
-    // Definir sector_id según el rol
-    if ($rol == 'admin') {
-        $sector_id = $_POST['sector_id'];
-    } else {
-        $sector_id = $sector_usuario;
-    }
+    $sector_id = ($rol == 'admin') ? $_POST['sector_id'] : $sector_usuario;
 
-    // Actualizar dispositivo
     $sql_update = "UPDATE inventario_dispositivos SET 
         tipo_dispositivo='$tipo_dispositivo',
-        marca='$marca',
+        marca_id=$marca_id,
         modelo='$modelo',
         numero_serie='$numero_serie',
         ip='$ip',
@@ -70,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         sector_id=$sector_id,
         estado='$estado',
         fecha_registro='$fecha_registro',
-        observaciones='$observaciones'
+        observaciones='$observaciones',
+        procesador_id=" . ($procesador_id ?: "NULL") . ",
+        memoria_ram_id=" . ($memoria_ram_id ?: "NULL") . "
         WHERE id=$id";
 
     if (mysqli_query($conexion, $sql_update)) {
@@ -80,35 +74,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Error al actualizar: " . mysqli_error($conexion);
     }
 }
+
+// Consultas para combos
+$marcas = mysqli_query($conexion, "SELECT id, nombre FROM marcas_pc ORDER BY nombre ASC");
+$procesadores = mysqli_query($conexion, "SELECT id, nombre FROM procesadores ORDER BY nombre ASC");
+$ram = mysqli_query($conexion, "SELECT id, nombre FROM memorias_ram ORDER BY nombre ASC");
+$sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores ORDER BY nombre ASC");
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Dispositivo</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-</head>
-<body>
 <div class="container mt-4">
     <h2>Editar Dispositivo</h2>
 
-    <form method="POST">
+    <form method="POST" id="form_dispositivo">
         <div class="mb-3">
             <label>Tipo de Dispositivo</label>
-            <select name="tipo_dispositivo" class="form-control" required>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'PC') echo 'selected'; ?>>PC</option>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'Notebook') echo 'selected'; ?>>Notebook</option>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'Monitor') echo 'selected'; ?>>Monitor</option>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'Impresora') echo 'selected'; ?>>Impresora</option>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'Periférico') echo 'selected'; ?>>Periférico</option>
-                <option <?php if ($dispositivo['tipo_dispositivo'] == 'Otro') echo 'selected'; ?>>Otro</option>
+            <select name="tipo_dispositivo" id="tipo_dispositivo" class="form-control" required onchange="mostrarCamposAdicionales()">
+                <?php
+                $tipos = ['PC','Notebook','Monitor','Impresora','Periférico','Otro'];
+                foreach ($tipos as $tipo):
+                    $sel = ($dispositivo['tipo_dispositivo'] == $tipo) ? 'selected' : '';
+                    echo "<option $sel>$tipo</option>";
+                endforeach;
+                ?>
             </select>
         </div>
 
         <div class="mb-3">
             <label>Marca</label>
-            <input type="text" name="marca" class="form-control" required value="<?php echo htmlspecialchars($dispositivo['marca']); ?>">
+            <select name="marca_id" class="form-control" required>
+                <option value="">Seleccione una marca...</option>
+                <?php while($m = mysqli_fetch_assoc($marcas)): ?>
+                    <option value="<?php echo $m['id']; ?>" <?php if ($dispositivo['marca_id'] == $m['id']) echo 'selected'; ?>>
+                        <?php echo $m['nombre']; ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div id="campos_adicionales" style="display:none;">
+            <div class="mb-3">
+                <label>Procesador</label>
+                <select name="procesador_id" class="form-control">
+                    <option value="">Seleccione un procesador...</option>
+                    <?php while($p = mysqli_fetch_assoc($procesadores)): ?>
+                        <option value="<?php echo $p['id']; ?>" <?php if ($dispositivo['procesador_id'] == $p['id']) echo 'selected'; ?>>
+                            <?php echo $p['nombre']; ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>Memoria RAM</label>
+                <select name="memoria_ram_id" class="form-control">
+                    <option value="">Seleccione memoria RAM...</option>
+                    <?php while($r = mysqli_fetch_assoc($ram)): ?>
+                        <option value="<?php echo $r['id']; ?>" <?php if ($dispositivo['memoria_ram_id'] == $r['id']) echo 'selected'; ?>>
+                            <?php echo $r['nombre']; ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -135,12 +161,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="mb-3">
                 <label>Sector</label>
                 <select name="sector_id" class="form-control" required>
-                    <?php
-                    $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores");
-                    while($s = mysqli_fetch_assoc($sectores)):
-                        $selected = ($s['id'] == $dispositivo['sector_id']) ? 'selected' : '';
-                    ?>
-                        <option value="<?php echo $s['id']; ?>" <?php echo $selected; ?>>
+                    <?php while($s = mysqli_fetch_assoc($sectores)): ?>
+                        <option value="<?php echo $s['id']; ?>" <?php if ($dispositivo['sector_id'] == $s['id']) echo 'selected'; ?>>
                             <?php echo $s['nombre']; ?>
                         </option>
                     <?php endwhile; ?>
@@ -171,6 +193,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="inventario.php" class="btn btn-secondary">Volver</a>
     </form>
 </div>
-</body>
-</html>
+
+<script>
+// Mostrar campos adicionales si es PC o Notebook
+function mostrarCamposAdicionales() {
+    var tipo = document.getElementById('tipo_dispositivo').value;
+    var campos = document.getElementById('campos_adicionales');
+    if (tipo === 'PC' || tipo === 'Notebook') {
+        campos.style.display = 'block';
+    } else {
+        campos.style.display = 'none';
+    }
+}
+document.addEventListener('DOMContentLoaded', mostrarCamposAdicionales);
+</script>
+
 <?php include 'includes/footer.php'; ?>
