@@ -46,6 +46,14 @@ $result = mysqli_query($conexion, $sql);
     <h2>Inventario de Parque Informático</h2>
 
     <a href="alta_dispositivo.php" class="btn btn-primary mb-3">+ Agregar Dispositivo</a>
+<?php if ($_SESSION['rol'] == 'admin'): ?>
+    <div class="mb-3">
+        <a href="abm_marcas_pc.php" class="btn btn-outline-secondary btn-sm">ABM Marcas PC</a>
+        <a href="abm_procesadores.php" class="btn btn-outline-secondary btn-sm">ABM Procesadores</a>
+        <a href="abm_memorias_ram.php" class="btn btn-outline-secondary btn-sm">ABM Memorias RAM</a>
+        <a href="abm_perifericos.php" class="btn btn-outline-secondary btn-sm">ABM Periféricos</a>
+    </div>
+<?php endif; ?>
 
     <table class="table table-bordered table-striped">
         <thead>
