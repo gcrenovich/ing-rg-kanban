@@ -53,6 +53,7 @@ $perifericos = mysqli_query($conexion, "SELECT * FROM marcas_perifericos ORDER B
                 <option value="Teclado">Teclado</option>
                 <option value="Monitor">Monitor</option>
                 <option value="Impresora">Impresora</option>
+                <option value="Scanner">Scanner</option>
                 <option value="Otro">Otro</option>
             </select>
         </div>
