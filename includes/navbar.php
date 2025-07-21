@@ -12,20 +12,23 @@ if (session_status() === PHP_SESSION_NONE) {
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link active" aria-current="page" href="dashboard.php">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="abm_usuarios.php">Usuarios</a></li>
-        <li class="nav-item"><a class="nav-link" href="abm_sectores.php">Sectores</a></li>
-        <li class="nav-item"><a class="nav-link" href="abm_tareas.php">Tareas</a></li>
-        <li class="nav-item"><a class="nav-link" href="reportes.php">Reportes</a></li>
-       <li class="nav-item"><a class="nav-link" href="inventario.php">Inventario IT</a></li>
-        <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Salir</a></li>
-        <?php if ($_SESSION['rol'] === 'admin'): ?>
-  <li class="nav-item">
-</li>
-<?php endif; ?>
+     <ul class="navbar-nav">
+    <li class="nav-item"><a class="nav-link" href="dashboard.php">Inicio</a></li>
+    <li class="nav-item"><a class="nav-link" href="abm_usuarios.php">Usuarios</a></li>
+    <li class="nav-item"><a class="nav-link" href="abm_sectores.php">Sectores</a></li>
+    <li class="nav-item"><a class="nav-link" href="abm_tareas.php">Tareas</a></li>
+    <li class="nav-item"><a class="nav-link" href="reportes.php">Reportes</a></li>
 
-      </ul>
+    <?php
+    $SECTOR_IT = 2; // Cambiar al ID correcto
+    if (isset($_SESSION['sector_id']) && $_SESSION['sector_id'] == $SECTOR_IT):
+    ?>
+    <li class="nav-item"><a class="nav-link" href="inventario.php">Inventario IT</a></li>
+    <?php endif; ?>
+
+    <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Salir</a></li>
+</ul>
+
     </div>
   </div>
 
