@@ -2,6 +2,7 @@
 session_start();
 include 'db.php';
 include 'includes/header.php';
+include 'includes/navbar.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'admin') {
     header('Location: login.php');
