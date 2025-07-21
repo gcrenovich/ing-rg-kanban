@@ -13,17 +13,19 @@ $sector_id = $_SESSION['sector_id'];
 
 include 'includes/navbar.php';
 
-// Consulta con JOIN a las tablas de catálogo
+// Consulta con JOIN a las tablas de catálogo, incluyendo Sistema Operativo
 if ($rol == 'admin') {
     $sql = "SELECT d.*, 
                    m.nombre AS marca_nombre, 
                    p.nombre AS procesador_nombre, 
                    r.nombre AS ram_nombre, 
+                   so.nombre AS so_nombre,
                    s.nombre AS sector_nombre
             FROM inventario_dispositivos d
             LEFT JOIN marcas_pc m ON d.marca_id = m.id
             LEFT JOIN procesadores p ON d.procesador_id = p.id
             LEFT JOIN memorias_ram r ON d.memoria_ram_id = r.id
+            LEFT JOIN sistemas_operativos so ON d.so_id = so.id
             JOIN sectores s ON d.sector_id = s.id
             ORDER BY d.fecha_registro DESC";
 } else {
@@ -31,11 +33,13 @@ if ($rol == 'admin') {
                    m.nombre AS marca_nombre, 
                    p.nombre AS procesador_nombre, 
                    r.nombre AS ram_nombre, 
+                   so.nombre AS so_nombre,
                    s.nombre AS sector_nombre
             FROM inventario_dispositivos d
             LEFT JOIN marcas_pc m ON d.marca_id = m.id
             LEFT JOIN procesadores p ON d.procesador_id = p.id
             LEFT JOIN memorias_ram r ON d.memoria_ram_id = r.id
+            LEFT JOIN sistemas_operativos so ON d.so_id = so.id
             JOIN sectores s ON d.sector_id = s.id
             WHERE d.sector_id = $sector_id
             ORDER BY d.fecha_registro DESC";
@@ -63,6 +67,7 @@ $result = mysqli_query($conexion, $sql);
         <a href="abm_procesadores.php" class="btn btn-outline-secondary btn-sm">ABM Procesadores</a>
         <a href="abm_memorias_ram.php" class="btn btn-outline-secondary btn-sm">ABM Memorias RAM</a>
         <a href="abm_perifericos.php" class="btn btn-outline-secondary btn-sm">ABM Periféricos</a>
+        <a href="abm_sistemas_operativos.php" class="btn btn-outline-secondary btn-sm">ABM Sistemas Operativos</a>
     </div>
 <?php endif; ?>
 
@@ -73,6 +78,7 @@ $result = mysqli_query($conexion, $sql);
                 <th>Marca / Modelo</th>
                 <th>Procesador</th>
                 <th>RAM</th>
+                <th>Sistema Operativo</th>
                 <th>N° Serie</th>
                 <th>IP</th>
                 <th>Asignado a</th>
@@ -92,6 +98,8 @@ $result = mysqli_query($conexion, $sql);
                 <td><?php echo ($row['procesador_nombre']) ? htmlspecialchars($row['procesador_nombre']) : '-'; ?></td>
 
                 <td><?php echo ($row['ram_nombre']) ? htmlspecialchars($row['ram_nombre']) : '-'; ?></td>
+
+                <td><?php echo ($row['so_nombre']) ? htmlspecialchars($row['so_nombre']) : '-'; ?></td>
 
                 <td><?php echo htmlspecialchars($row['numero_serie']); ?></td>
                 <td><?php echo htmlspecialchars($row['ip']); ?></td>

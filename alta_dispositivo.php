@@ -3,7 +3,6 @@ session_start();
 include 'db.php';
 include 'includes/header.php';
 
-// Verificación de acceso
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
@@ -12,7 +11,6 @@ if (!isset($_SESSION['usuario_id'])) {
 $rol = $_SESSION['rol'];
 $sector_id = $_SESSION['sector_id'];
 
-// Si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo_dispositivo = $_POST['tipo_dispositivo'];
     $marca_id = $_POST['marca_id'];
@@ -24,19 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fecha_registro = $_POST['fecha_registro'];
     $observaciones = $_POST['observaciones'];
 
-    // Campos adicionales si es PC o Notebook
     $procesador_id = $_POST['procesador_id'] ?? NULL;
     $memoria_ram_id = $_POST['memoria_ram_id'] ?? NULL;
+    $so_id = $_POST['so_id'] ?? NULL;
 
     if ($rol == 'admin') {
         $sector_id = $_POST['sector_id'];
     }
 
     $sql = "INSERT INTO inventario_dispositivos 
-        (tipo_dispositivo, marca_id, modelo, numero_serie, ip, usuario_asignado, sector_id, estado, fecha_registro, observaciones, procesador_id, memoria_ram_id)
+        (tipo_dispositivo, marca_id, modelo, numero_serie, ip, usuario_asignado, sector_id, estado, fecha_registro, observaciones, procesador_id, memoria_ram_id, so_id)
         VALUES 
         ('$tipo_dispositivo', $marca_id, '$modelo', '$numero_serie', '$ip', '$usuario_asignado', $sector_id, '$estado', '$fecha_registro', '$observaciones', 
-        " . ($procesador_id ?: "NULL") . ", " . ($memoria_ram_id ?: "NULL") . ")";
+        " . ($procesador_id ?: "NULL") . ", " . ($memoria_ram_id ?: "NULL") . ", " . ($so_id ?: "NULL") . ")";
 
     if (mysqli_query($conexion, $sql)) {
         header('Location: inventario.php');
@@ -50,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $marcas = mysqli_query($conexion, "SELECT id, nombre FROM marcas_pc ORDER BY nombre ASC");
 $procesadores = mysqli_query($conexion, "SELECT id, nombre FROM procesadores ORDER BY nombre ASC");
 $ram = mysqli_query($conexion, "SELECT id, nombre FROM memorias_ram ORDER BY nombre ASC");
+$sistemas = mysqli_query($conexion, "SELECT id, nombre, categoria FROM sistemas_operativos ORDER BY nombre ASC");
 $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores ORDER BY nombre ASC");
 ?>
 
@@ -100,6 +99,18 @@ $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores ORDER BY no
                     <?php endwhile; ?>
                 </select>
             </div>
+        </div>
+
+        <div class="mb-3" id="campo_so" style="display:none;">
+            <label>Sistema Operativo</label>
+            <select name="so_id" id="so_id" class="form-control">
+                <option value="">Seleccione sistema operativo...</option>
+                <?php while($s = mysqli_fetch_assoc($sistemas)): ?>
+                    <option data-categoria="<?php echo $s['categoria']; ?>" value="<?php echo $s['id']; ?>">
+                        <?php echo $s['nombre']; ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
         </div>
 
         <div class="mb-3">
@@ -159,15 +170,33 @@ $sectores = mysqli_query($conexion, "SELECT id, nombre FROM sectores ORDER BY no
 </div>
 
 <script>
-// Mostrar combos adicionales si es PC o Notebook
 function mostrarCamposAdicionales() {
     var tipo = document.getElementById('tipo_dispositivo').value;
     var campos = document.getElementById('campos_adicionales');
+    var so = document.getElementById('campo_so');
+    var opciones = document.querySelectorAll('#so_id option');
 
     if (tipo === 'PC' || tipo === 'Notebook') {
         campos.style.display = 'block';
+        so.style.display = 'block';
+        opciones.forEach(opt => {
+            opt.style.display = (opt.dataset.categoria === 'PC/Notebook' || opt.value === '') ? 'block' : 'none';
+        });
+    } else if (tipo === 'Periférico' || tipo === 'Monitor' || tipo === 'Impresora') {
+        campos.style.display = 'none';
+        so.style.display = 'none';
+    } else if (tipo === 'Otro') {
+        campos.style.display = 'none';
+        so.style.display = 'block';
+        opciones.forEach(opt => {
+            opt.style.display = (opt.dataset.categoria === 'Otros' || opt.value === '') ? 'block' : 'none';
+        });
     } else {
         campos.style.display = 'none';
+        so.style.display = 'block';
+        opciones.forEach(opt => {
+            opt.style.display = (opt.dataset.categoria === 'Móvil/Tablet' || opt.value === '') ? 'block' : 'none';
+        });
     }
 }
 </script>
