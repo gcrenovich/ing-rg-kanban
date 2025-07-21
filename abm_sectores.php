@@ -2,6 +2,7 @@
 session_start();
 require 'db.php';
 include 'includes/navbar.php';
+include 'includes/header.php';
 
 // Solo admin puede acceder
 if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
