@@ -1,13 +1,30 @@
-// actualizar_estado.php
 <?php
-// actualizar_estado.php   
-require 'db.php';
-$id = $_POST['id'];
-$estado = $_POST['estado'];
+// actualizar_estado.php
+session_start();
+include 'includes/json_db.php';
 
-$stmt = $conn->prepare("UPDATE tareas SET estado = ? WHERE id = ?");
-$stmt->execute([$estado, $id]);
+// Requiere POST con: id (reparacion id) y estado (nuevo estado)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error'=>'Method not allowed']);
+    exit;
+}
+$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+$estado = $_POST['estado'] ?? '';
 
-echo "ok";
+if ($id <= 0 || $estado === '') {
+    http_response_code(400);
+    echo json_encode(['error'=>'Parámetros inválidos']);
+    exit;
+}
 
-?>
+$reparaciones = read_json('reparaciones.json');
+$ok = update_by_id($reparaciones, $id, ['estado' => $estado]);
+
+if ($ok) {
+    write_json('reparaciones.json', $reparaciones);
+    echo json_encode(['ok'=>true]);
+} else {
+    http_response_code(404);
+    echo json_encode(['error'=>'No se encontró reparación']);
+}

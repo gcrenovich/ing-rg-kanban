@@ -25,7 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
     ?>
     <li class="nav-item"><a class="nav-link" href="inventario.php">Inventario IT</a></li>
     <?php endif; ?>
-
+º
     <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Salir</a></li>
 </ul>
 
