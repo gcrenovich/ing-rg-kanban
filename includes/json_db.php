@@ -1,7 +1,6 @@
 <?php
 // includes/json_db.php
-// Funciones simples para usar archivos JSON como "BD" local.
-// Rutas relativas asumen que se incluye desde la carpeta principal del proyecto (kanban/).
+// Helpers para usar archivos JSON como "BD" local
 
 function data_path($file) {
     $dir = __DIR__ . '/../data';
@@ -19,6 +18,7 @@ function read_json($file) {
 
 function write_json($file, $data) {
     $path = data_path($file);
+    // Asegurar que sea array indexado
     file_put_contents($path, json_encode(array_values($data), JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
     return true;
 }
@@ -29,17 +29,15 @@ function new_id($items) {
     return max($ids) + 1;
 }
 
-// Buscar por id
 function find_by_id($items, $id) {
-    foreach ($items as $i) if ((int)$i['id'] === (int)$id) return $i;
+    foreach ($items as $it) if ((string)$it['id'] === (string)$id) return $it;
     return null;
 }
 
-// Actualiza un registro por id (merge)
 function update_by_id(&$items, $id, $payload) {
     $updated = false;
     foreach ($items as &$row) {
-        if ((int)$row['id'] === (int)$id) {
+        if ((string)$row['id'] === (string)$id) {
             $row = array_merge($row, $payload);
             $updated = true;
             break;
@@ -48,8 +46,8 @@ function update_by_id(&$items, $id, $payload) {
     return $updated;
 }
 
-// Simple login check helper
-function login_find_user($username) {
+// login helper
+function find_user_by_username($username) {
     $users = read_json('usuarios.json');
     foreach ($users as $u) {
         if (isset($u['usuario']) && $u['usuario'] === $username) return $u;

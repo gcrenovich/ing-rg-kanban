@@ -1,1 +1,24 @@
-[]
+[
+    {
+        "id": 1,
+        "tipo": "celular",
+        "marca": "samsung",
+        "modelo": "Galaxylkj",
+        "nro_serie": "871987094283987",
+        "cliente_nombre": "Batman",
+        "cliente_telefono": "1354268742556",
+        "observaciones": "kajhdkihgsaf",
+        "fecha_ingreso": "2025-10-31"
+    },
+    {
+        "id": 2,
+        "tipo": "celular",
+        "marca": "Generica",
+        "modelo": "xiaomi",
+        "nro_serie": "546464",
+        "cliente_nombre": "brunodiaz",
+        "cliente_telefono": "+65+656+5",
+        "observaciones": "265+645",
+        "fecha_ingreso": "2025-10-31"
+    }
+]

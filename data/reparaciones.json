@@ -1,1 +1,28 @@
-[]
+[
+    {
+        "id": 1,
+        "equipo_id": 1,
+        "titulo": "microfono",
+        "diagnostico": "",
+        "tecnico_id": null,
+        "fecha_ingreso": "2025-10-31",
+        "fecha_entrega": null,
+        "costo": 0,
+        "estado": "Entregado",
+        "notas": "",
+        "fecha_modificacion": "2025-10-31 20:59:09"
+    },
+    {
+        "id": 2,
+        "equipo_id": 2,
+        "titulo": "fuvcha",
+        "diagnostico": "",
+        "tecnico_id": null,
+        "fecha_ingreso": "2025-10-31",
+        "fecha_entrega": null,
+        "costo": 0,
+        "estado": "En proceso",
+        "notas": "",
+        "fecha_modificacion": "2025-10-31 20:58:57"
+    }
+]
