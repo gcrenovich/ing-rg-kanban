@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "telefono": "3885-123456",
+    "direccion": "Av. San Martín 123",
+    "email": "juanperez@gmail.com"
+  },
+  {
+    "id": 2,
+    "nombre": "María Gómez",
+    "telefono": "3885-654321",
+    "direccion": "Belgrano 450",
+    "email": "maria.gomez@yahoo.com"
+  }
+]
