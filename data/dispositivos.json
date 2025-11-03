@@ -1,0 +1,7 @@
+[
+  { "id": 1, "tipo": "Smartphone" },
+  { "id": 2, "tipo": "SmartTV" },
+  { "id": 3, "tipo": "Parlante" },
+  { "id": 4, "tipo": "Notebook" },
+  { "id": 5, "tipo": "Impresora" }
+]

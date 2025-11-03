@@ -1,9 +1,7 @@
 [
   {
-    "id": 1,
     "usuario": "admin",
-    "clave": "admin",
-    "nombre": "Administrador",
+    "password": "$2y$10$....",  
     "rol": "admin"
   }
 ]
