@@ -1,16 +1,16 @@
 [
-  {
-    "id": 1,
-    "cliente_id": 1,
-    "dispositivo_id": 4,
-    "marca": "HP",
-    "modelo": "245 G7",
-    "problema": "No enciende",
-    "estado": "Pendiente",
-    "tecnico": "Juan Pérez",
-    "fecha_ingreso": "2025-11-03",
-    "fecha_entrega": null,
-    "comentarios": [],
-    "comprobante_id": "C-0001"
-  }
+    {
+        "id": 1,
+        "cliente_id": 1,
+        "dispositivo_id": 4,
+        "marca": "HP",
+        "modelo": "245 G7",
+        "problema": "No enciende",
+        "estado": "Cancelado",
+        "tecnico": "Juan Pérez",
+        "fecha_ingreso": "2025-11-03",
+        "fecha_entrega": null,
+        "comentarios": [],
+        "comprobante_id": "C-0001"
+    }
 ]
