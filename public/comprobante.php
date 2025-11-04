@@ -45,8 +45,16 @@ body {
   border-bottom: 2px solid #2563eb;
   padding-bottom: 10px;
 }
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .logo img {
-  max-height: 70px;
+  max-height: 80px;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
 }
 h1 {
   color: #1e3a8a;
@@ -91,6 +99,7 @@ th {
   .print-btn { display: none; }
   body { background: #fff; margin: 0; }
   .comprobante { box-shadow: none; margin: 0; }
+  .logo img { max-height: 70px; }
 }
 </style>
 </head>
@@ -100,7 +109,7 @@ th {
 
   <div class="header">
     <div class="logo">
-      <img src="../assets/img/logo.png" alt="Logo">
+      <img src="assets/img/logo.png" alt="Logo DIGITEL MOBIL">
     </div>
     <div>
       <h1>Comprobante de Ingreso</h1>

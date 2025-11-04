@@ -79,23 +79,34 @@ foreach ($estados_posibles as $estado) {
         'borderWidth' => 2
     ];
 }
+
+$fecha_generacion = date('d/m/Y H:i');
 ?>
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Reportes</title>
+<title>Reportes - DIGITEL MOBIL</title>
 <link rel="stylesheet" href="../assets/css/estilos.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; color:#333; }
-header.topbar { background:#1e3a8a; color:#fff; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; }
-header .logo { font-weight:bold; font-size:1.1em; }
-header .top-actions a { margin-left:8px; text-decoration:none; padding:8px 10px; border-radius:6px; background:#2563eb; color:#fff; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background:#f4f6f8; margin:0; color:#333; }
+header.topbar {
+  background: linear-gradient(90deg, #1d3557, #457b9d);
+  color:#fff; display:flex; justify-content:space-between; align-items:center;
+  padding:10px 20px; border-bottom:3px solid #2a9d8f;
+}
+.logo { display:flex; align-items:center; gap:12px; font-size:1.3em; font-weight:bold; text-transform:uppercase; }
+.logo img { height:50px; width:auto; border-radius:10px; box-shadow:0 0 8px rgba(0,0,0,0.3); }
+header .top-actions a { text-decoration:none; background:#2a9d8f; padding:8px 12px; border-radius:6px; color:#fff; transition:0.2s; }
+header .top-actions a:hover { background:#21867a; }
 main { max-width:1100px; margin:20px auto; padding:16px; }
-.card { background:#fff; border-radius:10px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:20px; }
+.card {
+  background:#fff; border-radius:12px; padding:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-bottom:20px;
+}
 h2, h3 { color:#1e3a8a; margin-bottom:10px; }
-table { width:100%; border-collapse:collapse; margin-top:8px; }
+table { width:100%; border-collapse:collapse; margin-top:8px; font-size:0.95em; }
 th, td { border:1px solid #d1d5db; padding:8px; text-align:left; }
 th { background:#e2e8f0; color:#1e293b; }
 input, select, button { padding:8px; border-radius:6px; border:1px solid #d1d5db; }
@@ -103,12 +114,18 @@ button.btn { background:#2563eb; color:#fff; border:none; cursor:pointer; border
 .filters { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
 canvas { max-width:100%; height:auto; margin-top:12px; }
 .summary { background:#f1f5f9; padding:10px; border-radius:6px; margin-top:10px; }
+.footer-legal {
+  text-align:center; font-size:0.8em; color:#555; margin-top:30px; border-top:1px dashed #ccc;
+  padding-top:10px;
+}
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="logo">📊 Reportes</div>
+    <div class="logo">
+  <img src="public/assets/img/logo.png" alt="DIGITEL MOBIL" class="logo-img">
+</div>
   <div class="top-actions">
     <a class="btn" href="index.php">Volver</a>
   </div>
@@ -131,6 +148,9 @@ canvas { max-width:100%; height:auto; margin-top:12px; }
       </select>
       <button class="btn" type="submit">🔍 Generar</button>
     </form>
+    <p style="font-size:0.9em; color:#555; margin-top:6px;">
+      📅 Reporte generado el <?= $fecha_generacion ?>
+    </p>
   </div>
 
   <div class="card">
@@ -156,6 +176,13 @@ canvas { max-width:100%; height:auto; margin-top:12px; }
   <div class="card">
     <h3>Evolución de estados por <?= $group === 'month' ? 'mes' : ($group === 'week' ? 'semana' : 'período') ?></h3>
     <canvas id="chart_estados"></canvas>
+  </div>
+
+  <div class="footer-legal">
+    <p><strong>© DIGITEL MOBIL - Servicio Técnico</strong></p>
+    <p id="leyenda-legal">
+      El presente informe es de carácter informativo. La información aquí contenida puede modificarse sin previo aviso.
+    </p>
   </div>
 </main>
 
