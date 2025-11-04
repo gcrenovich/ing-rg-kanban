@@ -43,8 +43,8 @@
     },
     {
         "id": 7,
-        "cliente_id": 3,
-        "dispositivo_id": 6,
+        "cliente_id": "3",
+        "dispositivo_id": "6",
         "marca": "mamali",
         "modelo": "olkjjalskd",
         "problema": "ñlmañlmf",
@@ -53,6 +53,21 @@
         "fecha_ingreso": "2025-11-04",
         "fecha_entrega": null,
         "comentarios": [],
-        "comprobante_id": "C-0007"
+        "comprobante_id": "C-0007",
+        "fecha_modificacion": "2025-11-04 19:04:09"
+    },
+    {
+        "id": 8,
+        "cliente_id": 1,
+        "dispositivo_id": 7,
+        "marca": "asd",
+        "modelo": "asd",
+        "problema": "asd",
+        "estado": "Pendiente",
+        "tecnico": "asd",
+        "fecha_ingreso": "2025-11-04",
+        "fecha_entrega": null,
+        "comentarios": [],
+        "comprobante_id": ""
     }
 ]
