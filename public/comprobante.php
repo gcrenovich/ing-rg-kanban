@@ -2,11 +2,22 @@
 // public/comprobante.php
 require_once __DIR__ . '/../includes/funciones.php';
 $id = $_GET['id'] ?? null;
-if (!$id) { echo 'ID requerido'; exit;}
+if (!$id) { echo 'ID requerido'; exit; }
+
 $t = find_by_id(leer_json('trabajos.json'), $id);
-if (!$t) { echo 'Trabajo no encontrado'; exit;}
+if (!$t) { echo 'Trabajo no encontrado'; exit; }
+
 $c = find_by_id(leer_json('clientes.json'), $t['cliente_id']);
 $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
+
+// Fecha y hora actual
+$fecha_hora = date('d/m/Y H:i');
+
+// Leyenda legal editable desde archivo
+$leyenda_path = __DIR__ . '/../includes/leyenda.txt';
+$leyenda = file_exists($leyenda_path)
+    ? trim(file_get_contents($leyenda_path))
+    : '*** Este comprobante no tiene valor legal ***';
 ?>
 <!doctype html>
 <html lang="es">
@@ -14,63 +25,137 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
 <meta charset="utf-8">
 <title>Comprobante <?=htmlspecialchars($t['comprobante_id'])?></title>
 <style>
-body{font-family:Arial;padding:18px}
-.header{display:flex;justify-content:space-between;align-items:center}
-h1{margin:0}
-.section{margin-top:12px}
-table{width:100%;border-collapse:collapse}
-td,th{padding:6px;border:1px solid #ccc}
-.print-btn{padding:8px 12px;background:#457b9d;color:#fff;border:none;border-radius:4px;cursor:pointer}
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f4f6f8;
+}
+.comprobante {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 10px;
+}
+.logo img {
+  max-height: 70px;
+}
+h1 {
+  color: #1e3a8a;
+  margin: 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+td, th {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+th {
+  background: #e0e7ff;
+  text-align: left;
+}
+.section {
+  margin-top: 20px;
+}
+.print-btn {
+  padding: 10px 15px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.print-btn:hover {
+  background: #1e40af;
+}
+.leyenda {
+  font-size: 12px;
+  color: #555;
+  margin-top: 30px;
+  border-top: 1px dashed #aaa;
+  padding-top: 10px;
+  text-align: center;
+}
+@media print {
+  .print-btn { display: none; }
+  body { background: #fff; margin: 0; }
+  .comprobante { box-shadow: none; margin: 0; }
+}
 </style>
 </head>
 <body>
-<div class="header">
-  <div>
-    <h1>Comprobante de ingreso</h1>
-    <div>Nº: <strong><?=htmlspecialchars($t['comprobante_id'])?></strong></div>
+
+<div class="comprobante">
+
+  <div class="header">
+    <div class="logo">
+      <img src="../assets/img/logo.png" alt="Logo">
+    </div>
+    <div>
+      <h1>Comprobante de Ingreso</h1>
+      <div><strong>N°:</strong> <?=htmlspecialchars($t['comprobante_id'])?></div>
+      <div><strong>Fecha:</strong> <?=$fecha_hora?></div>
+    </div>
+    <div>
+      <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
+    </div>
   </div>
-  <div>
-    <button class="print-btn" onclick="window.print()">Imprimir</button>
+
+  <div class="section">
+    <h3>Cliente</h3>
+    <table>
+      <tr><th>Nombre</th><td><?=htmlspecialchars($c['nombre'] ?? '')?></td></tr>
+      <tr><th>Teléfono</th><td><?=htmlspecialchars($c['telefono'] ?? '')?></td></tr>
+      <tr><th>Email</th><td><?=htmlspecialchars($c['email'] ?? '')?></td></tr>
+      <tr><th>Dirección</th><td><?=htmlspecialchars($c['direccion'] ?? '')?></td></tr>
+    </table>
   </div>
-</div>
 
-<div class="section">
-  <h3>Cliente</h3>
-  <table>
-    <tr><th>Nombre</th><td><?=htmlspecialchars($c['nombre'] ?? '')?></td></tr>
-    <tr><th>Teléfono</th><td><?=htmlspecialchars($c['telefono'] ?? '')?></td></tr>
-    <tr><th>Email</th><td><?=htmlspecialchars($c['email'] ?? '')?></td></tr>
-    <tr><th>Dirección</th><td><?=htmlspecialchars($c['direccion'] ?? '')?></td></tr>
-  </table>
-</div>
+  <div class="section">
+    <h3>Equipo</h3>
+    <table>
+      <tr><th>Tipo</th><td><?=htmlspecialchars($disp['tipo'] ?? '')?></td></tr>
+      <tr><th>Marca</th><td><?=htmlspecialchars($t['marca'] ?? '')?></td></tr>
+      <tr><th>Modelo</th><td><?=htmlspecialchars($t['modelo'] ?? '')?></td></tr>
+      <tr><th>Problema</th><td><?=nl2br(htmlspecialchars($t['problema'] ?? ''))?></td></tr>
+      <tr><th>Técnico</th><td><?=htmlspecialchars($t['tecnico'] ?? '')?></td></tr>
+      <tr><th>Fecha ingreso</th><td><?=htmlspecialchars($t['fecha_ingreso'] ?? '')?></td></tr>
+    </table>
+  </div>
 
-<div class="section">
-  <h3>Equipo</h3>
-  <table>
-    <tr><th>Tipo</th><td><?=htmlspecialchars($disp['tipo'] ?? '')?></td></tr>
-    <tr><th>Marca</th><td><?=htmlspecialchars($t['marca'] ?? '')?></td></tr>
-    <tr><th>Modelo</th><td><?=htmlspecialchars($t['modelo'] ?? '')?></td></tr>
-    <tr><th>Problema</th><td><?=nl2br(htmlspecialchars($t['problema'] ?? ''))?></td></tr>
-    <tr><th>Técnico</th><td><?=htmlspecialchars($t['tecnico'] ?? '')?></td></tr>
-    <tr><th>Fecha ingreso</th><td><?=htmlspecialchars($t['fecha_ingreso'] ?? '')?></td></tr>
-  </table>
-</div>
-
-<div class="section">
-  <h3>Observaciones</h3>
-  <table>
-    <tr><td>
-      <?php
-        if (!empty($t['comentarios']) && is_array($t['comentarios'])) {
-          foreach ($t['comentarios'] as $com) {
-            echo '<div><small>'.htmlspecialchars($com['fecha']).' - '.htmlspecialchars($com['autor'] ?? '').':</small><div>'.nl2br(htmlspecialchars($com['texto'])).'</div></div><hr>';
+  <div class="section">
+    <h3>Observaciones</h3>
+    <table>
+      <tr><td>
+        <?php
+          if (!empty($t['comentarios']) && is_array($t['comentarios'])) {
+            foreach ($t['comentarios'] as $com) {
+              echo '<div><small>'.htmlspecialchars($com['fecha']).' - '.htmlspecialchars($com['autor'] ?? '').':</small><div>'.nl2br(htmlspecialchars($com['texto'])).'</div></div><hr>';
+            }
+          } else {
+            echo 'Sin comentarios';
           }
-        } else {
-          echo 'Sin comentarios';
-        }
-      ?>
-    </td></tr>
-  </table>
+        ?>
+      </td></tr>
+    </table>
+  </div>
+
+  <div class="leyenda">
+    <?=nl2br(htmlspecialchars($leyenda))?>
+  </div>
+
 </div>
+
 </body>
 </html>
