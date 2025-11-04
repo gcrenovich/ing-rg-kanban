@@ -51,7 +51,7 @@ ksort($series);
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<header class="topbar"><div class="logo">Reportes</div><div class="top-actions"><a class="btn" href="dashboard.php">Volver</a></div></header>
+<header class="topbar"><div class="logo">Reportes</div><div class="top-actions"><a class="btn" href="index.php">Volver</a></div></header>
 <main style="padding:12px;">
 <form method="get">
   Desde: <input type="date" name="desde" value="<?=htmlspecialchars($desde)?>">

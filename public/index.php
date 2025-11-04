@@ -1,13 +1,29 @@
 <?php
-$trabajos = json_decode(file_get_contents(__DIR__ . '/../data/trabajos.json'), true) ?? [];
+require_once __DIR__ . '/../includes/funciones.php';
+require_login();
+
+// Leer datos JSON
+$trabajos = leer_json('trabajos.json');
+$clientes = leer_json('clientes.json');
+$dispositivos = leer_json('dispositivos.json');
+
+function clienteById($clientes, $id) {
+    foreach ($clientes as $c) if ((string)$c['id'] === (string)$id) return $c;
+    return null;
+}
+function dispositivoById($disp, $id) {
+    foreach ($disp as $d) if ((string)$d['id'] === (string)$id) return $d;
+    return null;
+}
+
 $estados = ['Pendiente', 'En proceso', 'Finalizado', 'Entregado', 'Cancelado'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard de Reparaciones</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Gestión de Reparaciones - Taller Tecnológico</title>
+    <link rel="stylesheet" href="../assets/css/estilos.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <style>
@@ -17,12 +33,27 @@ $estados = ['Pendiente', 'En proceso', 'Finalizado', 'Entregado', 'Cancelado'];
             margin: 0;
             padding: 0;
         }
-        h1 {
-            text-align: center;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: #1e3a8a;
             color: #fff;
-            padding: 15px;
+            padding: 10px 20px;
+        }
+        header .btn {
+            background: #2563eb;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-left: 6px;
+        }
+        header .btn:hover { background: #1d4ed8; }
+
+        h1 {
             margin: 0;
+            font-size: 20px;
         }
         .kanban {
             display: flex;
@@ -79,7 +110,15 @@ $estados = ['Pendiente', 'En proceso', 'Finalizado', 'Entregado', 'Cancelado'];
     </style>
 </head>
 <body>
-<h1>Gestión de Reparaciones - Taller Tecnológico</h1>
+
+<header>
+    <h1>Gestión de Reparaciones - Taller Tecnológico</h1>
+    <div>
+        <a class="btn" href="registrar.php">+ Nuevo ingreso</a>
+        <a class="btn" href="reportes.php">Reportes</a>
+        <a class="btn" href="logout.php" style="background:#e63946">Salir</a>
+    </div>
+</header>
 
 <div class="kanban">
 <?php foreach ($estados as $estado): ?>
@@ -89,14 +128,16 @@ $estados = ['Pendiente', 'En proceso', 'Finalizado', 'Entregado', 'Cancelado'];
             <?php foreach ($trabajos as $t): ?>
                 <?php if (($t['estado'] ?? '') === $estado): ?>
                     <?php 
-                        $dispositivo = $t['dispositivo'] ?? 'Sin especificar';
+                        $cli = clienteById($clientes, $t['cliente_id'] ?? null);
+                        $dis = dispositivoById($dispositivos, $t['dispositivo_id'] ?? null);
+                        $nombreCliente = $cli['nombre'] ?? 'Desconocido';
+                        $tipoDisp = $dis['tipo'] ?? ($t['dispositivo'] ?? 'Sin especificar');
                         $modelo = $t['modelo'] ?? '';
-                        $cliente = $t['cliente'] ?? 'Desconocido';
                     ?>
                     <div class="tarjeta" data-id="<?= htmlspecialchars($t['id']) ?>">
-                        <strong><?= htmlspecialchars($dispositivo) ?></strong><br>
+                        <strong><?= htmlspecialchars($tipoDisp) ?></strong><br>
                         <?= htmlspecialchars($modelo) ?><br>
-                        <small><?= htmlspecialchars($cliente) ?></small>
+                        <small><?= htmlspecialchars($nombreCliente) ?></small>
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
@@ -128,5 +169,6 @@ document.querySelectorAll('.tarjeta').forEach(card => {
     });
 });
 </script>
+
 </body>
 </html>

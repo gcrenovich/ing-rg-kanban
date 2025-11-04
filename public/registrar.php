@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 <body>
-<header class="topbar"><div class="logo">Registrar Ingreso</div><div class="top-actions"><a class="btn" href="dashboard.php">Volver</a></div></header>
+<header class="topbar"><div class="logo">Registrar Ingreso</div><div class="top-actions"><a class="btn" href="index.php">Volver</a></div></header>
 <main style="padding:12px;">
 <?php if($mensaje): ?><p class="error"><?=htmlspecialchars($mensaje)?></p><?php endif; ?>
 <form method="post">
