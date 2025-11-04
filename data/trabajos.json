@@ -6,7 +6,7 @@
         "marca": "HP",
         "modelo": "245 G7",
         "problema": "No enciende",
-        "estado": "En proceso",
+        "estado": "Guardado",
         "tecnico": "Juan Pérez",
         "fecha_ingreso": "2025-11-03",
         "fecha_entrega": null,
@@ -34,11 +34,25 @@
         "marca": "Toshiba",
         "modelo": "stalell",
         "problema": "fdgsdfg5464",
-        "estado": "Pendiente",
+        "estado": "Guardado",
         "tecnico": "",
         "fecha_ingreso": "2025-11-04",
         "fecha_entrega": null,
         "comentarios": [],
         "comprobante_id": "C-0006"
+    },
+    {
+        "id": 7,
+        "cliente_id": 3,
+        "dispositivo_id": 6,
+        "marca": "mamali",
+        "modelo": "olkjjalskd",
+        "problema": "ñlmañlmf",
+        "estado": "En proceso",
+        "tecnico": "Juan",
+        "fecha_ingreso": "2025-11-04",
+        "fecha_entrega": null,
+        "comentarios": [],
+        "comprobante_id": "C-0007"
     }
 ]

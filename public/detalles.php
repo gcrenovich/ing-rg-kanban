@@ -19,6 +19,75 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
 <title>Detalle trabajo #<?=htmlspecialchars($t['id'])?></title>
 <link rel="stylesheet" href="../assets/css/estilos.css">
 <style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+header.topbar {
+  background: #1e3a8a;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+}
+header .logo {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+header .top-actions .btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+main {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+h2 {
+  color: #1e3a8a;
+  border-bottom: 2px solid #1e3a8a;
+  padding-bottom: 6px;
+}
+section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+h3 {
+  color: #2563eb;
+  margin-top: 0;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.btn {
+  display: inline-block;
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #1e40af;
+}
 .btn-accion {
   display:inline-block;
   margin:4px;
@@ -29,12 +98,23 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
   color:#fff;
   text-decoration:none;
 }
-.btn-eliminar { background:#e63946; }
-.btn-modificar { background:#457b9d; }
-.btn-imprimir { background:#1d3557; }
-.btn-guardar { background:#2a9d8f; }
+.btn-eliminar { background:#dc2626; }
+.btn-modificar { background:#1d4ed8; }
+.btn-imprimir { background:#0f172a; }
+.btn-guardar { background:#16a34a; }
 .btn-volver { background:#6c757d; color:#fff; }
-.section-actions { margin-top:16px; padding-top:10px; border-top:1px solid #ccc; }
+.section-actions { 
+  margin-top:16px; 
+  padding-top:10px; 
+  border-top:1px solid #ccc;
+}
+.comentario {
+  padding:8px;
+  border:1px solid #ddd;
+  margin-bottom:6px;
+  border-radius:6px;
+  background:#f9fafb;
+}
 </style>
 </head>
 <body>
@@ -42,11 +122,11 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
 <header class="topbar">
   <div class="logo">Detalle del Trabajo</div>
   <div class="top-actions">
-    <a class="btn btn-volver" href="dashboard.php">Volver</a>
+    <a class="btn btn-volver" href="index.php">Volver</a>
   </div>
 </header>
 
-<main style="padding:12px;">
+<main>
   <h2>Trabajo <?=htmlspecialchars($t['comprobante_id'] ?? '')?></h2>
 
   <section>
@@ -69,7 +149,7 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
     <div>
       <?php if (!empty($t['comentarios']) && is_array($t['comentarios'])): ?>
         <?php foreach ($t['comentarios'] as $com): ?>
-          <div style="padding:8px;border:1px solid #ddd;margin-bottom:6px;border-radius:6px;">
+          <div class="comentario">
             <small><?=htmlspecialchars($com['fecha'])?> — <?=htmlspecialchars($com['autor'] ?? 'Sistema')?></small>
             <div><?=nl2br(htmlspecialchars($com['texto']))?></div>
           </div>
@@ -81,10 +161,10 @@ $disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
 
     <form id="formComentario" method="post" action="../api/comentarios.php">
       <input type="hidden" name="id" value="<?=htmlspecialchars($t['id'])?>">
-      <label>Autor</label><br>
-      <input name="autor" value="<?=htmlspecialchars($_SESSION['usuario']['usuario'] ?? '')?>"><br>
-      <label>Comentario</label><br>
-      <textarea name="texto" required></textarea><br>
+      <label>Autor</label>
+      <input name="autor" value="<?=htmlspecialchars($_SESSION['usuario']['usuario'] ?? '')?>">
+      <label>Comentario</label>
+      <textarea name="texto" required></textarea>
       <button class="btn" type="submit">Agregar comentario</button>
     </form>
   </section>
