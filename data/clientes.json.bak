@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "nombre": "Carlos Pérez",
+    "telefono": "3875123456",
+    "email": "carlos@gmail.com",
+    "direccion": "San Martín 234"
+  },
+  {
+    "id": 2,
+    "nombre": "Juan Pérez",
+    "telefono": "3815123456",
+    "email": "juanperez@example.com",
+    "direccion": "San Martín 123 - San Salvador",
+    "fecha_registro": "2025-11-04"
+  }
+]
