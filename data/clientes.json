@@ -20,5 +20,23 @@
         "telefono": "68646546846541",
         "email": "bvasdv@kjhsadk.comn",
         "direccion": "safsafsa"
+    },
+    {
+        "id": 4,
+        "nombre": "Nuevo Cliente",
+        "dni": "30123456",
+        "telefono": "3811234567",
+        "email": "mail@mail.com",
+        "direccion": "Dirección",
+        "fecha_registro": "2025-11-06"
+    },
+    {
+        "id": 5,
+        "nombre": "asdfsaf",
+        "dni": "6546468",
+        "telefono": "adsfasf",
+        "email": "sdgdsg",
+        "direccion": "gsdgdsg",
+        "fecha_registro": "2025-11-06"
     }
 ]

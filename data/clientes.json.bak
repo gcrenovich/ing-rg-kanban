@@ -1,17 +1,34 @@
 [
-  {
-    "id": 1,
-    "nombre": "Carlos Pérez",
-    "telefono": "3875123456",
-    "email": "carlos@gmail.com",
-    "direccion": "San Martín 234"
-  },
-  {
-    "id": 2,
-    "nombre": "Juan Pérez",
-    "telefono": "3815123456",
-    "email": "juanperez@example.com",
-    "direccion": "San Martín 123 - San Salvador",
-    "fecha_registro": "2025-11-04"
-  }
+    {
+        "id": 1,
+        "nombre": "Carlos Pérez",
+        "telefono": "3875123456",
+        "email": "carlos@gmail.com",
+        "direccion": "San Martín 234"
+    },
+    {
+        "id": 2,
+        "nombre": "Juan Pérez",
+        "telefono": "3815123456",
+        "email": "juanperez@example.com",
+        "direccion": "San Martín 123 - San Salvador",
+        "fecha_registro": "2025-11-04"
+    },
+    {
+        "id": 3,
+        "nombre": "Batman",
+        "telefono": "68646546846541",
+        "email": "bvasdv@kjhsadk.comn",
+        "direccion": "safsafsa"
+    },
+
+    {
+    "id": 4,
+    "nombre": "Nuevo Cliente",
+    "dni": "30123456",
+    "telefono": "3811234567",
+    "email": "mail@mail.com",
+    "direccion": "Dirección",
+    "fecha_registro": "2025-11-06"
+}
 ]

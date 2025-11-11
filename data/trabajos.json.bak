@@ -119,11 +119,39 @@
         "marca": "sdsg",
         "modelo": "dsfsd",
         "problema": "sdfsdef",
-        "estado": "Finalizado",
+        "estado": "Entregado",
         "tecnico": "sdfsdf",
         "fecha_ingreso": "2025-11-04",
         "fecha_entrega": null,
         "comentarios": [],
         "comprobante_id": "C-0012"
+    },
+    {
+        "id": 13,
+        "cliente_id": 5,
+        "dispositivo_id": 1,
+        "marca": "sdfgdsa",
+        "modelo": "dgds",
+        "problema": "fgsdg",
+        "estado": "Pendiente",
+        "tecnico": "sdgdsg",
+        "fecha_ingreso": "2025-11-06",
+        "fecha_entrega": null,
+        "comentarios": [],
+        "comprobante_id": "C-0013"
+    },
+    {
+        "id": 14,
+        "cliente_id": 5,
+        "dispositivo_id": 1,
+        "marca": "sdfgdsa",
+        "modelo": "dgds",
+        "problema": "fgsdg",
+        "estado": "Pendiente",
+        "tecnico": "sdgdsg",
+        "fecha_ingreso": "2025-11-06",
+        "fecha_entrega": null,
+        "comentarios": [],
+        "comprobante_id": ""
     }
 ]

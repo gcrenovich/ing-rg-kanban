@@ -1,14 +1,21 @@
 <?php
 // public/comprobante.php
 require_once __DIR__ . '/../includes/funciones.php';
+
 $id = $_GET['id'] ?? null;
 if (!$id) { echo 'ID requerido'; exit; }
 
-$t = find_by_id(leer_json('trabajos.json'), $id);
+// CARGO ARCHIVOS JSON CON RUTA CORRECTA
+$trabajos = json_decode(file_get_contents(__DIR__ . '/../data/trabajos.json'), true);
+$clientes = json_decode(file_get_contents(__DIR__ . '/../data/clientes.json'), true);
+$dispositivos = json_decode(file_get_contents(__DIR__ . '/../data/dispositivos.json'), true);
+
+// BUSCO REGISTROS
+$t = find_by_id($trabajos, $id);
 if (!$t) { echo 'Trabajo no encontrado'; exit; }
 
-$c = find_by_id(leer_json('clientes.json'), $t['cliente_id']);
-$disp = find_by_id(leer_json('dispositivos.json'), $t['dispositivo_id']);
+$c = find_by_id($clientes, $t['cliente_id']);
+$disp = find_by_id($dispositivos, $t['dispositivo_id']);
 
 // Fecha y hora actual
 $fecha_hora = date('d/m/Y H:i');
@@ -44,11 +51,6 @@ body {
   align-items: center;
   border-bottom: 2px solid #2563eb;
   padding-bottom: 10px;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .logo img {
   max-height: 80px;
@@ -125,6 +127,7 @@ th {
     <h3>Cliente</h3>
     <table>
       <tr><th>Nombre</th><td><?=htmlspecialchars($c['nombre'] ?? '')?></td></tr>
+      <tr><th>DNI</th><td><?=htmlspecialchars($c['dni'] ?? 'No registrado')?></td></tr>
       <tr><th>Teléfono</th><td><?=htmlspecialchars($c['telefono'] ?? '')?></td></tr>
       <tr><th>Email</th><td><?=htmlspecialchars($c['email'] ?? '')?></td></tr>
       <tr><th>Dirección</th><td><?=htmlspecialchars($c['direccion'] ?? '')?></td></tr>
