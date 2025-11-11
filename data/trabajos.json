@@ -72,17 +72,18 @@
     },
     {
         "id": 9,
-        "cliente_id": 1,
-        "dispositivo_id": 7,
-        "marca": "asd",
-        "modelo": "asd",
-        "problema": "asd",
+        "cliente_id": "1",
+        "dispositivo_id": "1",
+        "marca": "asdfdhdfrh",
+        "modelo": "asdfdhdfh",
+        "problema": "asdfyhrtdfyudr",
         "estado": "En proceso",
         "tecnico": "asd",
         "fecha_ingreso": "2025-11-04",
         "fecha_entrega": null,
         "comentarios": [],
-        "comprobante_id": "C-0009"
+        "comprobante_id": "C-0009",
+        "fecha_modificacion": "2025-11-11 20:27:14"
     },
     {
         "id": 10,
